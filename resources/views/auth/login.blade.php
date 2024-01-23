@@ -56,7 +56,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>ระบบติดตามหนี้</title>
+    <title>ระบบกฏหมาย</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -95,7 +95,7 @@
                                             <img src="{{asset('dist/img/imglogin4.jpg')}}" alt="" style="width : 100%;">
                                             <div class="carousel-caption d-none d-md-block ">
                                                 <h5>Chookiat Debt</h5>
-                                                <p>ระบบติดตามหนี้</p>
+                                                <p>ระบบกฏหมาย</p>
                                             </div>
                                         </div>
                                         <div class="carousel-item">

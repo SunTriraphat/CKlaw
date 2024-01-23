@@ -107,7 +107,7 @@
                         <h4 class="mt-2">ฟังก์ชั่นการใช้งาน (Feature)</h4>
                         <div class="row">
                             <div class="col border-end">
-                                <h6 class="fw-semibold">ระบบติดตามหนี้</h6>
+                                <h6 class="fw-semibold">ระบบกฏหมาย</h6>
 
 
                                 <div class="form-check">
