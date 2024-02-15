@@ -38,8 +38,10 @@ class DataLawsuit extends Controller
         
 
         if ($request->dateStart == NULL && $request->dateEnd == NULL) {
-            $dateStart = date('Y-m-d');
-            $dateEnd = date('Y-m-d');
+            $dateStart = date('Y-m-d', strtotime('first day of january this year'));
+            // $dateStart = date('Y-m-d');
+            $dateEnd = date('Y-m-d', strtotime('last day of december this year'));
+            // $dateEnd = date('Y-m-d');
         } else {
             $dateStart = $request->dateStart;
             $dateEnd = $request->dateEnd;

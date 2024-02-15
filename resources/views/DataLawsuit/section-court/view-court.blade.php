@@ -137,11 +137,11 @@
                                         <tr>
 
                                             <td style="text-align: center;">{{ $item->CON_NO }}</td>
-                                            <td style="text-align: center;">{{ $item->name }}
+                                            <td style="text-align: center;">{{$item->prefix}}{{ $item->name }}
                                                 {{ $item->surname }}
                                                 @foreach ($dataGuarantor as $key => $guarantor)
                                                     @if ($item->id == $guarantor->cus_id)
-                                                        <br>{{ $guarantor->name }} {{ $guarantor->surname }}
+                                                        <br>{{$guarantor->prefix}}{{ $guarantor->name }} {{ $guarantor->surname }}
                                                     @endif
                                                 @endforeach
                                             </td>
