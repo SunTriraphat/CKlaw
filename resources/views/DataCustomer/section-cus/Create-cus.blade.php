@@ -33,13 +33,30 @@
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 {{-- detail con --}}
                 <div class="row mb-4">
-                    <div class="col-9 mt-3">
+                    <div class="col-6 mt-3">
                         <input type="text"class="form-control" name="CON_NO_Search" id="CON_NO_Search" required
                             placeholder="เลขที่สัญญา" />
+                        
+                       
                     </div>
-                    <div class="col-3 mt-3 ">
+                    <div class="col-3 mt-3">
+                        <select class="form-select addOPR" id="plaintiff" name="plaintiff" required>
+                            @foreach ($Plaintiff as $item)
+                                <option value="{{ $item->db }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-3 mt-3">
                         <button type="button" class="btn btn-primary " id="searchBtn">ค้นหา</button>
                     </div>
+                </div>
+                <div>
+                    @include('DataCustomer.section-cus.show-search')
+                </div>
+                <div class="modal-footer">
+                   
+                    <button type="button" class="btn btn-danger " class="close"
+                        data-bs-dismiss="modal" aria-label="Close">ปิด</button>
                 </div>
             </div>
             <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
@@ -59,13 +76,11 @@
                                     <div class="col-sm-6">
                                         <div class="mb-3 ">
                                             <span>โจทย์</span>
-
                                             <select class="form-select addOPR" id="plaintiff" name="plaintiff" required>
                                                 @foreach ($Plaintiff as $item)
                                                     <option value="{{ $item->name }}">{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
-
                                         </div>
                                         <div class="mb-3 ">
                                             <span>เลขที่สัญญา</span>
@@ -91,7 +106,6 @@
                                         <input type="text"class="form-control" name="black_no" id="black_no" required
                                             placeholder=" " />
                                     </div> --}}
-
 
                                         {{-- <div class="mb-3 input-bx">
                                         <span>ทุนทรัพย์ฟ้อง</span>
@@ -126,13 +140,8 @@
                                                 required />
                                         </div>
 
-
-
-
-
                                         {{-- <div class="mb-3 input-bx">
                                         <span>ศาลรับฟ้องวันที่</span>
-                                        
                                         <input type="date" value="" name="date_tribunal" id="date_tribunal" class="form-control"  max="{{date('Y-m-d')}}">
                                      
                                     </div> --}}
@@ -826,6 +835,48 @@
         Inputmask().mask(document.getElementById('ID_num2'));
         Inputmask().mask(document.getElementById('PhoneNum2'));
 
+        $('#searchBtn').click(function() {
+
+            let con_no = $('#CON_NO_Search').val();
+            let plaintiff = $('#plaintiff').val();
+            $.ajax({
+                url: "{{ route('Cus.show', 0) }}?type={{ 'SearchCus' }}",
+                method: "GET",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    con_no: con_no,
+                    plaintiff: plaintiff
+                },
+
+                success: function(result) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: `SUCCESS `,
+                        showConfirmButton: false,
+                        text: result.message,
+                        timer: 1500
+                    });
+                    // $('#modal-xl').modal('hide');
+                    $('#show-search').html(result.html);
+                    // console.log(result.html);
+                    // location.reload();
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: `ERROR ` + err.status + ` !!!`,
+                        text: err.responseJSON.message,
+                        showConfirmButton: true,
+                    });
+
+                    // $('#modal_xl_2').modal('hide');
+
+                }
+            });
+        });
+
         $('#saveBtn').click(function() {
             let num = 0;
 
@@ -867,7 +918,7 @@
 
             // if (name != '' && surname != '' && CON_NO != '' && prefix != ''  && ID_num != ''  && PhoneNum != '') {
             $.ajax({
-                url: "{{ route('Cus.store') }}?type={{ 'Datacus' }}",
+                url: "{{ route('Cus.store') }}?type={{ 'createCus' }}",
                 method: "post",
                 data: {
                     _token: "{{ csrf_token() }}",

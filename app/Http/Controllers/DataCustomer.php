@@ -48,9 +48,8 @@ class DataCustomer extends Controller
             return view('DataCustomer.section-cus.Create-ImportData');
         } elseif (@$request->type == 'Createcus') {
             $Plaintiff = Plaintiff::get();
-            return view('DataCustomer.section-cus.Create-Cus',compact('Plaintiff'));
-        }
-         elseif (@$request->type == 'ExportExcel') {
+            return view('DataCustomer.section-cus.Create-Cus', compact('Plaintiff'));
+        } elseif (@$request->type == 'ExportExcel') {
             return view('ExportExcel.view');
         }
     }
@@ -61,86 +60,165 @@ class DataCustomer extends Controller
 
         // Store your user in database 
 
+        if (@$request->type == 'importSeachCus') {
+            if ($request->plaintiff == 'RSFHP') {
+                $data = DB::connection('ibmi2')
+                    ->table('RSFHP.ARMAST')
+                    ->leftJoin('RSFHP.CUSTMAST', 'RSFHP.ARMAST.CUSCOD', '=', 'RSFHP.CUSTMAST.CUSCOD')
+                    ->where('RSFHP.ARMAST.CONTNO', '=', $request->CONTNO)
+                    ->first();
+                $con_no = $request->CONTNO;
 
-        $type = @$request->type;
-        $data = Customer::get();
-        $dataStatus = Tribunal_status::get();
-        $dataGuarantor = Guarantor::get();
+                $data_cusfollow = DB::connection('ibmi2')->select("SELECT * FROM RSFHP.VWLET_ARMGAR WHERE CONTNO = '${con_no}' ");
+            } else if ($request->plaintiff == 'PSFHP') {
+                // $data = DB::connection('ibmi2')
+                //     ->table('PSFHP.ARMAST')
+                //     ->leftJoin('PSFHP.VIEW_CUSTMAIL', 'PSFHP.ARMAST.CUSCOD', '=', 'PSFHP.VIEW_CUSTMAIL.CUSCOD')
+                //     ->where('PSFHP.ARMAST.CONTNO', '=', $request->con_no)
+                //     ->first();
 
+                $data = DB::connection('ibmi2')
+                    ->table('PSFHP.ARMAST')
+                    ->leftJoin('PSFHP.CUSTMAST', 'PSFHP.ARMAST.CUSCOD', '=', 'PSFHP.CUSTMAST.CUSCOD')
+                    ->where('PSFHP.ARMAST.CONTNO', '=', $request->CONTNO)
+                    ->first();
+                $con_no = $request->CONTNO;
 
-
-        DB::beginTransaction();
-        try {
-            $Customer = new Customer;
-            $CusAdd = new CusAddress;
-
-
-            $Customer->plaintiff = @$request->data['plaintiff'];
-            $Customer->CON_NO = @$request->data['CON_NO'];
-            $Customer->name = @$request->data['name'];
-            $Customer->surname = @$request->data['surname'];
-            $Customer->prefix = @$request->data['prefix'];
-            
-            $Customer->ID_num = ( @$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @$request->data['ID_num']) : NULL);
-            $Customer->PhoneNum = ( @$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @$request->data['PhoneNum']) : NULL);
-
-            $Customer->status_tribunal = 'N';
-            $Customer->status_com = 'N';
-            $Customer->status_exe = 'N';
-            $Customer->status_close = 'N';
-            $Customer->save();
-
-            $CusAdd->HouseNumber = @$request->data['HouseNumber'];
-            $CusAdd->Moo = @$request->data['Moo'];
-            $CusAdd->Region = @$request->data['Region'];
-            $CusAdd->Province = @$request->data['Province'];
-            $CusAdd->District = @$request->data['District'];
-            $CusAdd->Tumbon = @$request->data['Tumbon'];
-            $CusAdd->Postcode = @$request->data['Postcode'];
-            $CusAdd->cus_id = $Customer->id;
-            $CusAdd->save();
-
-           
-
-            for ($i = 1; $i <= @$request->data['num']; $i++) {
-                $Guarantor = new Guarantor;
-                $GuaAdd = new GuaAddress;
-                $Guarantor->name = @$request->data['name' . $i];
-                $Guarantor->surname = @$request->data['surname' . $i];
-                $Guarantor->prefix = @$request->data['prefix' . $i];
-                // $Guarantor->ID_num = @$request->data['ID_num' . $i];
-                // $Guarantor->PhoneNum = @$request->data['PhoneNum' . $i];
-
-                $Guarantor->ID_num = ( @$request->data['ID_num' . $i] != NULL ? str_replace(array('-', '_'), "", @$request->data['ID_num' . $i]) : NULL);
-                $Guarantor->PhoneNum = ( @$request->data['PhoneNum' . $i] != NULL ? str_replace(array('-', '_'), "", @$request->data['PhoneNum' . $i]) : NULL);
-    
-               
-                $Guarantor->Cus_id = $Customer->id;
-                $Guarantor->save();
-
-                $GuaAdd->HouseNumber = @$request->data['HouseNumber'. $i];
-                $GuaAdd->Moo = @$request->data['Moo'. $i];
-                $GuaAdd->Region = @$request->data['Region'. $i];
-                $GuaAdd->Province = @$request->data['Province'. $i];
-                $GuaAdd->District = @$request->data['District'. $i];
-                $GuaAdd->Tumbon = @$request->data['Tumbon'. $i];
-                $GuaAdd->Postcode = @$request->data['Postcode'. $i];
-                $GuaAdd->gua_id = $Guarantor->id;
-                $GuaAdd->save();
-
-                // $Status->save();
+                $data_cusfollow = DB::connection('ibmi2')->select("SELECT * FROM PSFHP.VWLET_ARMGAR WHERE CONTNO = '${con_no}' ");
             }
-            DB::commit();
+            $con_no_law = Customer::where('CON_NO', $request->CONTNO)->first();
 
-            $message = 'บันทึกเรียบร้อย';
 
-            $renderHTML = view('DataCustomer.section-cus.view-cus', compact('data', 'dataStatus', 'type', 'dataGuarantor'))->render();
+            if ($data != NULL &&  $con_no_law == NULL) {
 
-            return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
-        } catch (\Exception $e) {
+                DB::beginTransaction();
+                try {
+                    // $Customer = Customer::create([
+                    //    "CON_NO" => $data->CONTNO,
+                    //    "prefix" =>  trim(iconv('Tis-620', 'utf-8', $data->SNAM)),
+                    //     "name" =>  trim(iconv('Tis-620', 'utf-8', $data->NAME1)),
+                    //     "surname" =>  trim(iconv('Tis-620', 'utf-8', $data->NAME2)),
+                    // ]);
+                    if ($request->plaintiff == 'RSFHP') {
+                        $plaintiff = 'บริษัท ชูเกียรติมอเตอร์ (1996) จำกัด';
+                    } elseif ($request->plaintiff == 'PSFHP') {
+                        $plaintiff = 'บริษัท ชูเกียรติเอสเตท จำกัด';
+                    }
+                    $Customer = new Customer;
+                    $Customer->CON_NO = $data->CONTNO;
+                    $Customer->prefix =  trim(iconv('Tis-620', 'utf-8', $data->SNAM));
+                    $Customer->name =  trim(iconv('Tis-620', 'utf-8', $data->NAME1));
+                    $Customer->surname =  trim(iconv('Tis-620', 'utf-8', $data->NAME2));
+                    $Customer->ID_num =   $data->IDNO;
+                    $Customer->plaintiff =   $plaintiff;
+                    $Customer->PhoneNum =   str_replace("-", "", $data->MOBILENO);
+                    $Customer->status_tribunal =  'N';
+                    $Customer->status_com = 'N';
+                    $Customer->status_exe = 'N';
+                    $Customer->save();
+                    if (@$data_cusfollow != NULL) {
+                        foreach (@$data_cusfollow as $item) {
+                            $Guarantor = new Guarantor;
+                            $Guarantor->prefix =  trim(iconv('Tis-620', 'utf-8', $item->SNAM));
+                            $Guarantor->name =  trim(iconv('Tis-620', 'utf-8', $item->NAME1));
+                            $Guarantor->surname =  trim(iconv('Tis-620', 'utf-8', $item->NAME2));
+                            $Guarantor->ID_num =   $item->IDNO;
+                            $Guarantor->PhoneNum =  str_replace("-", "", $item->TELP);
+                            $Guarantor->cus_id = $Customer->id;
+                            $Guarantor->save();
+                        }
+                    }
 
-            DB::rollback();
-            return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
+                    DB::commit();
+                } catch (\Exception $e) {
+
+                    DB::rollback();
+                    return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
+                }
+            } else {
+                return response()->json(['message' => 'error'], 500);
+            }
+        } elseif (@$request->type == 'createCus') {
+            $type = @$request->type;
+            $data = Customer::get();
+            $dataStatus = Tribunal_status::get();
+            $dataGuarantor = Guarantor::get();
+
+
+
+            DB::beginTransaction();
+            try {
+                $Customer = new Customer;
+                $CusAdd = new CusAddress;
+
+
+                $Customer->plaintiff = @$request->data['plaintiff'];
+                $Customer->CON_NO = @$request->data['CON_NO'];
+                $Customer->name = @$request->data['name'];
+                $Customer->surname = @$request->data['surname'];
+                $Customer->prefix = @$request->data['prefix'];
+
+                $Customer->ID_num = (@$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @$request->data['ID_num']) : NULL);
+                $Customer->PhoneNum = (@$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @$request->data['PhoneNum']) : NULL);
+
+                $Customer->status_tribunal = 'N';
+                $Customer->status_com = 'N';
+                $Customer->status_exe = 'N';
+                $Customer->status_close = 'N';
+                $Customer->save();
+
+                $CusAdd->HouseNumber = @$request->data['HouseNumber'];
+                $CusAdd->Moo = @$request->data['Moo'];
+                $CusAdd->Region = @$request->data['Region'];
+                $CusAdd->Province = @$request->data['Province'];
+                $CusAdd->District = @$request->data['District'];
+                $CusAdd->Tumbon = @$request->data['Tumbon'];
+                $CusAdd->Postcode = @$request->data['Postcode'];
+                $CusAdd->cus_id = $Customer->id;
+                $CusAdd->save();
+
+
+
+                for ($i = 1; $i <= @$request->data['num']; $i++) {
+                    $Guarantor = new Guarantor;
+                    $GuaAdd = new GuaAddress;
+                    $Guarantor->name = @$request->data['name' . $i];
+                    $Guarantor->surname = @$request->data['surname' . $i];
+                    $Guarantor->prefix = @$request->data['prefix' . $i];
+                    // $Guarantor->ID_num = @$request->data['ID_num' . $i];
+                    // $Guarantor->PhoneNum = @$request->data['PhoneNum' . $i];
+
+                    $Guarantor->ID_num = (@$request->data['ID_num' . $i] != NULL ? str_replace(array('-', '_'), "", @$request->data['ID_num' . $i]) : NULL);
+                    $Guarantor->PhoneNum = (@$request->data['PhoneNum' . $i] != NULL ? str_replace(array('-', '_'), "", @$request->data['PhoneNum' . $i]) : NULL);
+
+
+                    $Guarantor->Cus_id = $Customer->id;
+                    $Guarantor->save();
+
+                    $GuaAdd->HouseNumber = @$request->data['HouseNumber' . $i];
+                    $GuaAdd->Moo = @$request->data['Moo' . $i];
+                    $GuaAdd->Region = @$request->data['Region' . $i];
+                    $GuaAdd->Province = @$request->data['Province' . $i];
+                    $GuaAdd->District = @$request->data['District' . $i];
+                    $GuaAdd->Tumbon = @$request->data['Tumbon' . $i];
+                    $GuaAdd->Postcode = @$request->data['Postcode' . $i];
+                    $GuaAdd->gua_id = $Guarantor->id;
+                    $GuaAdd->save();
+
+                    // $Status->save();
+                }
+                DB::commit();
+
+                $message = 'บันทึกเรียบร้อย';
+
+                $renderHTML = view('DataCustomer.section-cus.view-cus', compact('data', 'dataStatus', 'type', 'dataGuarantor'))->render();
+
+                return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
+            } catch (\Exception $e) {
+
+                DB::rollback();
+                return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
+            }
         }
     }
 
@@ -148,18 +226,39 @@ class DataCustomer extends Controller
     {
         if (@$request->type == 'SearchCus') {
             // ค้นหาตามเลขสัญญา
-            $data = DB::connection('ibmi2')
-                ->table('RSFHP.ARMAST')
-                ->leftJoin('RSFHP.VIEW_CUSTMAIL', 'RSFHP.ARMAST.CUSCOD', '=', 'RSFHP.VIEW_CUSTMAIL.CUSCOD')
-                ->where('RSFHP.ARMAST.CONTNO', '=', 'P01-63010004')
-                ->first();
+            if ($request->plaintiff == 'RSFHP') {
+                $data = DB::connection('ibmi2')
+                    ->table('RSFHP.ARMAST')
+                    ->leftJoin('RSFHP.CUSTMAST', 'RSFHP.ARMAST.CUSCOD', '=', 'RSFHP.CUSTMAST.CUSCOD')
+                    ->where('RSFHP.ARMAST.CONTNO', '=', $request->con_no)
+                    ->first();
+
+                $con_no = $request->con_no;
+
+                $data_cusfollow = DB::connection('ibmi2')->select("SELECT * FROM RSFHP.VWLET_ARMGAR WHERE CONTNO = '${con_no}' ");
+            } else if ($request->plaintiff == 'PSFHP') {
+                $data = DB::connection('ibmi2')
+                    ->table('PSFHP.ARMAST')
+                    ->leftJoin('PSFHP.CUSTMAST', 'PSFHP.ARMAST.CUSCOD', '=', 'PSFHP.CUSTMAST.CUSCOD')
+                    ->where('PSFHP.ARMAST.CONTNO', '=', $request->con_no)
+                    ->first();
+                $con_no = $request->con_no;
+
+                $data_cusfollow = DB::connection('ibmi2')->select("SELECT * FROM PSFHP.VWLET_ARMGAR WHERE CONTNO = '${con_no}' ");
+            }
+
+
+
             // ค้นหาตามเลขบัตรประชาชน
             $data2 = DB::connection('ibmi2')
                 ->table('RSFHP.ARMAST')
                 ->leftJoin('RSFHP.VIEW_CUSTMAIL', 'RSFHP.ARMAST.CUSCOD', '=', 'RSFHP.VIEW_CUSTMAIL.CUSCOD')
                 ->where('RSFHP.VIEW_CUSTMAIL.IDNO', '=', '3930600088690')
                 ->first();
-            $html = '';
+
+            $html = view('DataCustomer.section-cus.show-search', compact('data', 'data_cusfollow'))->render();
+            // $renderHTML = view('DataCustomer.section-contract.view', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther'))->render();
+
             return response()->json(['html' => $html]);
         }
         if (@$request->type == 'showDetail') {
@@ -224,7 +323,7 @@ class DataCustomer extends Controller
             }
 
 
-           
+
 
             // dd($sum);
             return view('DataCustomer.section-contract.view', compact('data', 'dataGuarantor', 'customer', 'financeOther', 'finance', 'totalsum', 'sumApproved', 'sumNotApproved'));
@@ -234,24 +333,24 @@ class DataCustomer extends Controller
             $customer = Customer::where('id', $id)->get();
             $Address = CusAddress::where('cus_id', $id)->first();
             $type = 'updateDataCus';
-            return view('DataCustomer.section-cus.Edit-Cus', compact('customer', 'type','Address'));
+            return view('DataCustomer.section-cus.Edit-Cus', compact('customer', 'type', 'Address'));
         }
         if (@$request->type == 'EditGuarantor') {
             $customer = Guarantor::where('id', $id)->get();
-          
+
             $Address = GuaAddress::where('gua_id', $id)->first();
-       
+
             $type = 'updateGuarantor';
-            return view('DataCustomer.section-cus.Edit-Cus', compact('customer', 'type','Address'));
+            return view('DataCustomer.section-cus.Edit-Cus', compact('customer', 'type', 'Address'));
         }
         if (@$request->type == 'EditTribunalStatus') {
             $data = Customer::where('id', $id)->first();
             return view('DataCustomer.section-cus.Edit-TribunalStatus', compact('data'));
         }
         if (@$request->type == 'statusClose') {
-            
+
             $data = Customer::where('id', $id)->first();
-            
+
             return view('DataCustomer.section-cus.close-status', compact('data'));
         }
     }
@@ -274,29 +373,29 @@ class DataCustomer extends Controller
                 $Customer->surname = @$request->data['surname'];
                 $Customer->prefix = @$request->data['prefix'];
 
- 
-                $Customer->ID_num = ( @$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['ID_num']) : NULL);
-                $Customer->PhoneNum = ( @$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['PhoneNum']) : NULL);
-                
+
+                $Customer->ID_num = (@$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['ID_num']) : NULL);
+                $Customer->PhoneNum = (@$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['PhoneNum']) : NULL);
+
                 $Customer->update();
 
                 $CusAdd = CusAddress::updateOrCreate([
-                    'cus_id' =>  $id, 
-                ],[
-                'PactCon_id' => $request->PactCon_id,
-               'HouseNumber' => @$request->data['HouseNumber'],
-                'Moo' => @$request->data['Moo'],
-                'Region' => @$request->data['Region'],
-                'Province' => @$request->data['Province'],
-                'District' => @$request->data['District'],
-                'Tumbon' => @$request->data['Tumbon'],
-                'Postcode' => @$request->data['Postcode'],
-                'cus_id' => $Customer->id,
+                    'cus_id' =>  $id,
+                ], [
+                    'PactCon_id' => $request->PactCon_id,
+                    'HouseNumber' => @$request->data['HouseNumber'],
+                    'Moo' => @$request->data['Moo'],
+                    'Region' => @$request->data['Region'],
+                    'Province' => @$request->data['Province'],
+                    'District' => @$request->data['District'],
+                    'Tumbon' => @$request->data['Tumbon'],
+                    'Postcode' => @$request->data['Postcode'],
+                    'cus_id' => $Customer->id,
                 ]);
 
                 $type = @$request->type;
                 $data = Customer::where('id', $id)->first();
-                $dataStatus = Tribunal_status::where('cus_id', $id)->orderBy('id','DESC')->first();
+                $dataStatus = Tribunal_status::where('cus_id', $id)->orderBy('id', 'DESC')->first();
                 $dataGuarantor = Guarantor::where('cus_id', $id)->get();
                 $customer = Customer::where('id', $id)->get();
 
@@ -317,35 +416,35 @@ class DataCustomer extends Controller
                 return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
             }
         }
-       
+
 
         if (@$request->type == 'updateGuarantor') {
 
             DB::beginTransaction();
             try {
                 $Guarantor = Guarantor::where('id',  @$request->data['id'])->first();
-                
+
                 $Guarantor->name = @$request->data['name'];
                 $Guarantor->surname = @$request->data['surname'];
                 $Guarantor->prefix = @$request->data['prefix'];
 
-                $Guarantor->ID_num = ( @$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['ID_num']) : NULL);
-                $Guarantor->PhoneNum = ( @$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['PhoneNum']) : NULL);
-                
+                $Guarantor->ID_num = (@$request->data['ID_num'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['ID_num']) : NULL);
+                $Guarantor->PhoneNum = (@$request->data['PhoneNum'] != NULL ? str_replace(array('-', '_'), "", @@$request->data['PhoneNum']) : NULL);
+
                 $Guarantor->update();
 
                 $GuaAdd = GuaAddress::updateOrCreate([
-                    'gua_id' =>  @$request->data['id'], 
-                ],[
-                'PactCon_id' => $request->PactCon_id,
-               'HouseNumber' => @$request->data['HouseNumber'],
-                'Moo' => @$request->data['Moo'],
-                'Region' => @$request->data['Region'],
-                'Province' => @$request->data['Province'],
-                'District' => @$request->data['District'],
-                'Tumbon' => @$request->data['Tumbon'],
-                'Postcode' => @$request->data['Postcode'],
-                'cus_id' => $Guarantor->id,
+                    'gua_id' =>  @$request->data['id'],
+                ], [
+                    'PactCon_id' => $request->PactCon_id,
+                    'HouseNumber' => @$request->data['HouseNumber'],
+                    'Moo' => @$request->data['Moo'],
+                    'Region' => @$request->data['Region'],
+                    'Province' => @$request->data['Province'],
+                    'District' => @$request->data['District'],
+                    'Tumbon' => @$request->data['Tumbon'],
+                    'Postcode' => @$request->data['Postcode'],
+                    'cus_id' => $Guarantor->id,
                 ]);
 
 
@@ -355,7 +454,7 @@ class DataCustomer extends Controller
                 $dataGuarantor = Guarantor::where('cus_id', @$request->data['cus_id'])->get();
                 $customer = Guarantor::where('cus_id', @$request->data['cus_id'])->get();
 
-               
+
                 $finance = Finance::where('cus_id', $id)->get();
                 $financeOther = FinanceOther::where('cus_id', $id)->get();
                 $financeSum = Finance::where('cus_id', $id)->first();
@@ -367,7 +466,7 @@ class DataCustomer extends Controller
 
                 $renderHTML = view('DataCustomer.section-contract.tab-tracking-Con', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther'))->render();
 
-                return response()->json(["html"=>$renderHTML]);
+                return response()->json(["html" => $renderHTML]);
             } catch (\Exception $e) {
 
                 DB::rollback();
@@ -378,7 +477,7 @@ class DataCustomer extends Controller
 
             $type = @$request->type;
             $data = Customer::where('id', $id)->first();
-            $dataStatus = Tribunal_status::where('cus_id', $id)->orderBy('id','DESC')->first();
+            $dataStatus = Tribunal_status::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             DB::beginTransaction();
             try {
 
@@ -386,7 +485,7 @@ class DataCustomer extends Controller
                 $Customer->status_tribunal = 'Y';
                 $Customer->status_com = 'N';
                 $Customer->status_exe = 'N';
-                
+
                 $Customer->update();
 
                 $Tribunal_debt = new Tribunal_debt;
@@ -400,12 +499,12 @@ class DataCustomer extends Controller
                 $Status->status_1 = 'Y';
                 $Status->cus_id = $id;
 
-                $ComPro = Compromise::where('cus_id',$id)->first();
-                if($ComPro != NULL){
+                $ComPro = Compromise::where('cus_id', $id)->first();
+                if ($ComPro != NULL) {
                     $ComPro->status = 'close';
                     $ComPro->update();
                 }
-                
+
                 $Tribunal_debt->save();
                 $Status->save();
                 $dataGuarantor = Guarantor::where('cus_id', $id)->get();
@@ -413,7 +512,7 @@ class DataCustomer extends Controller
                 $finance = Finance::where('cus_id', $id)->get();
                 $financeOther = FinanceOther::where('cus_id', $id)->get();
                 $financeSum = Finance::where('cus_id', $id)->first();
-                
+
                 DB::commit();
 
                 $message = 'บันทึกเรียบร้อย';
@@ -439,65 +538,60 @@ class DataCustomer extends Controller
         //
     }
 
-    public function SearchData(Request $request){
+    public function SearchData(Request $request)
+    {
         if (@$request->type == 1) {      //Search Address
             if (@$request->Flag == 1) {      //ภาค
-                $data = TB_Provinces::where('Zone_pro',@$request->value)
+                $data = TB_Provinces::where('Zone_pro', @$request->value)
                     ->selectRaw('Province_pro, count(*) as total')
                     ->groupBy('Province_pro')
                     ->orderBY('Province_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 2) {  //จังหวัด
-                $data = TB_Provinces::where('Province_pro',@$request->value)
+            } elseif (@$request->Flag == 2) {  //จังหวัด
+                $data = TB_Provinces::where('Province_pro', @$request->value)
                     ->selectRaw('District_pro, count(*) as total')
                     ->groupBy('District_pro')
                     ->orderBY('District_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 3) {  //อำเภอ
-                $data = TB_Provinces::where('District_pro',@$request->value)
+            } elseif (@$request->Flag == 3) {  //อำเภอ
+                $data = TB_Provinces::where('District_pro', @$request->value)
                     ->selectRaw('Tambon_pro, count(*) as total')
                     ->groupBy('Tambon_pro')
                     ->orderBY('Tambon_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 4) {  //ตำบล
-                $data = TB_Provinces::where('Tambon_pro',@$request->value)
-                    ->where('District_pro',@$request->District)
-                    ->where('Province_pro',@$request->Province)
+            } elseif (@$request->Flag == 4) {  //ตำบล
+                $data = TB_Provinces::where('Tambon_pro', @$request->value)
+                    ->where('District_pro', @$request->District)
+                    ->where('Province_pro', @$request->Province)
                     ->select('Postcode_pro')
                     ->first();
             }
             return response()->json($data);
         }
-        
+
         if (@$request->type == 3) {      //Search Address
             if (@$request->Flag == 1) {      //ภาค
-                $data = TB_Provinces::where('Zone_pro',@$request->value)
+                $data = TB_Provinces::where('Zone_pro', @$request->value)
                     ->selectRaw('Province_pro, count(*) as total')
                     ->groupBy('Province_pro')
                     ->orderBY('Province_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 2) {  //จังหวัด
-                $data = TB_Provinces::where('Province_pro',@$request->value)
+            } elseif (@$request->Flag == 2) {  //จังหวัด
+                $data = TB_Provinces::where('Province_pro', @$request->value)
                     ->selectRaw('District_pro, count(*) as total')
                     ->groupBy('District_pro')
                     ->orderBY('District_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 3) {  //อำเภอ
-                $data = TB_Provinces::where('District_pro',@$request->value)
+            } elseif (@$request->Flag == 3) {  //อำเภอ
+                $data = TB_Provinces::where('District_pro', @$request->value)
                     ->selectRaw('Tambon_pro, count(*) as total')
                     ->groupBy('Tambon_pro')
                     ->orderBY('Tambon_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 4) {  //ตำบล
-                $data = TB_Provinces::where('Tambon_pro',@$request->value)
-                    ->where('District_pro',@$request->District)
-                    ->where('Province_pro',@$request->Province)
+            } elseif (@$request->Flag == 4) {  //ตำบล
+                $data = TB_Provinces::where('Tambon_pro', @$request->value)
+                    ->where('District_pro', @$request->District)
+                    ->where('Province_pro', @$request->Province)
                     ->select('Postcode_pro')
                     ->first();
             }
@@ -505,44 +599,38 @@ class DataCustomer extends Controller
         }
         if (@$request->type == 2) {      //Search Address
             if (@$request->Flag == 1) {      //ภาค
-                $data = TB_Provinces::where('Zone_pro',@$request->value)
+                $data = TB_Provinces::where('Zone_pro', @$request->value)
                     ->selectRaw('Province_pro, count(*) as total')
                     ->groupBy('Province_pro')
                     ->orderBY('Province_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 2) {  //จังหวัด
-                $data = TB_Provinces::where('Province_pro',@$request->value)
+            } elseif (@$request->Flag == 2) {  //จังหวัด
+                $data = TB_Provinces::where('Province_pro', @$request->value)
                     ->selectRaw('District_pro, count(*) as total')
                     ->groupBy('District_pro')
                     ->orderBY('District_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 3) {  //อำเภอ
-                $data = TB_Provinces::where('District_pro',@$request->value)
+            } elseif (@$request->Flag == 3) {  //อำเภอ
+                $data = TB_Provinces::where('District_pro', @$request->value)
                     ->selectRaw('Tambon_pro, count(*) as total')
                     ->groupBy('Tambon_pro')
                     ->orderBY('Tambon_pro', 'ASC')
                     ->get();
-            }
-            elseif (@$request->Flag == 4) {  //ตำบล
-                $data = TB_Provinces::where('Tambon_pro',@$request->value)
-                    ->where('District_pro',@$request->District)
-                    ->where('Province_pro',@$request->Province)
+            } elseif (@$request->Flag == 4) {  //ตำบล
+                $data = TB_Provinces::where('Tambon_pro', @$request->value)
+                    ->where('District_pro', @$request->District)
+                    ->where('Province_pro', @$request->Province)
                     ->select('Postcode_pro')
                     ->first();
             }
             return response()->json($data);
         }
-       
     }
     public function export(Request $request)
     {
         // $data = DB::table('Hp_ConCus')->get();
-        if(@$request->type == '1'){
+        if (@$request->type == '1') {
             return Excel::download(new exportDataCustomers, 'รายงานทั้งหมด.xlsx');
-           
         }
-        
     }
 }
