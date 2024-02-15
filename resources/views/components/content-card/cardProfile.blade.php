@@ -40,7 +40,7 @@
                         <tr>
                             <th class="text-start">ชื่อ-นามสกุล</th>
 
-                            <td class="text-end"> {{ $item->name }} {{ $item->surname }} </td>
+                            <td class="text-end"> {{$item->prefix}}{{ $item->name }} {{ $item->surname }} </td>
 
                             {{-- <td class="text-end"> {{ $item->TribunalToCus->name }} {{ $item->TribunalToCus->surname }}</td> --}}
                         </tr>
@@ -50,7 +50,7 @@
                             @if ($data['Guarantor']->cus_id == $item->id || $data['Guarantor']->cus_id == $item->TribunalToCus->id)
                                 <tr>
                                     <th class="text-start">ผู้ค้ำคนที่{{ $i + 1 }}</th>
-                                    <td class="text-end"> {{ $data['Guarantor']->name }}
+                                    <td class="text-end"> {{$data['Guarantor']->prefix}}{{ $data['Guarantor']->name }}
                                         {{ $data['Guarantor']->surname }}</td>
                                 </tr>
                             @endif
