@@ -1347,21 +1347,22 @@ class DataFinance extends Controller
                     if($LawFinFuture != null){
                         $LawFinFuture->amount -= $Finance->totalsum;
                         $LawFinFuture->update();
-                    }
-                   
+
                 } elseif ($request->data['status'] == 'รออนุมัติ') {
                     $Finance->Date_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ขอยกเลิก') {
 
                     $Finance->Date_cancel_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ยกเลิก') {
-                    $LawFinFuture->amount += $Finance->totalsum;
+                    if($LawFinFuture != null){
+                        $LawFinFuture->amount += $Finance->totalsum;
+                        $LawFinFuture->update();
+                    }
                     $Finance->Date_cancel = date("Y-m-d");
                 }
 
 
                 $Finance->update();
-               
 
                 DB::commit();
 

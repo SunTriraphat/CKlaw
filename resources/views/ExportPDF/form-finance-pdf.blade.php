@@ -81,7 +81,7 @@
             @if ($data->send_defendant != 0)
                 <tr>
                 
-                    <th colspan="2" ><p style="font-size: 15px; text-indent: 100px;">- ค่าธรรมเนียมศาลฟ้องคดี</p></th>
+                    <th colspan="2" ><p style="font-size: 15px; text-indent: 100px;">- ค่าส่งหมายเรียกจำเลย</p></th>
                     <td ><p style="font-size: 15px; ">{{ number_format($data->send_defendant, 2) }} บาท</p></td>
                 </tr>
             @endif
@@ -191,6 +191,10 @@
         <tr>
             <th ></th>
             <th colspan="2" style="text-align: center;"><p style="font-size: 15px;">( {{ $textFin }} )</p></th>
+        </tr>
+        <tr>
+            
+            <th colspan="3"><p style="font-size: 15px;"><b>หมายเหตุ : {{ $data->note }} </b></p></th>
         </tr>
         <tr> 
             <br>
