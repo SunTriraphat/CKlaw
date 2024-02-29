@@ -59,7 +59,7 @@ class DataCustomer extends Controller
     {
 
         // Store your user in database 
-
+       
         if (@$request->type == 'importSeachCus') {
             
             if ($request->plaintiff == 'RSFHP') {
@@ -220,6 +220,63 @@ class DataCustomer extends Controller
                 DB::rollback();
                 return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
             }
+        }elseif(@$request->type == 'CreateGuarantor'){
+            
+            DB::beginTransaction();
+
+            try {
+                
+                    $Guarantor = new Guarantor;
+                    $GuaAdd = new GuaAddress;
+                    $Guarantor->name = @$request->data['name'];
+                    $Guarantor->surname = @$request->data['surname'];
+                    $Guarantor->prefix = @$request->data['prefix'];
+                    // $Guarantor->ID_num = @$request->data['ID_num' . $i];
+                    // $Guarantor->PhoneNum = @$request->data['PhoneNum' . $i];
+
+                    $Guarantor->ID_num = (@$request->data['ID_num' ] != NULL ? str_replace(array('-', '_'), "", @$request->data['ID_num' . $i]) : NULL);
+                    $Guarantor->PhoneNum = (@$request->data['PhoneNum' ] != NULL ? str_replace(array('-', '_'), "", @$request->data['PhoneNum' . $i]) : NULL);
+
+
+                    $Guarantor->Cus_id = @$request->data['cus_id'];
+                    $Guarantor->save();
+
+                    $GuaAdd->HouseNumber = @$request->data['HouseNumber' ];
+                    $GuaAdd->Moo = @$request->data['Moo' ];
+                    $GuaAdd->Region = @$request->data['Region' ];
+                    $GuaAdd->Province = @$request->data['Province' ];
+                    $GuaAdd->District = @$request->data['District' ];
+                    $GuaAdd->Tumbon = @$request->data['Tumbon' ];
+                    $GuaAdd->Postcode = @$request->data['Postcode'];
+                    $GuaAdd->gua_id = $Guarantor->id;
+                    $GuaAdd->save();
+
+                    // $Status->save();
+              
+                DB::commit();
+
+                $type = @$request->type;
+                $data = Customer::where('id', @$request->data['cus_id'])->first();
+                $dataStatus = Tribunal_status::where('cus_id', @$request->data['cus_id'])->orderBy('id', 'DESC')->first();
+                $dataGuarantor = Guarantor::where('cus_id',  @$request->data['cus_id'])->get();
+                $customer = Customer::where('id',  @$request->data['cus_id'])->get();
+
+                $finance = Finance::where('cus_id',  @$request->data['cus_id'])->get();
+                $financeOther = FinanceOther::where('cus_id', @$request->data['cus_id'])->get();
+                $financeSum = Finance::where('cus_id',  @$request->data['cus_id'])->first();
+
+                DB::commit();
+
+                $message = 'บันทึกเรียบร้อย';
+
+                $renderHTML = view('DataCustomer.section-contract.view', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther'))->render();
+
+                return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
+            } catch (\Exception $e) {
+
+                DB::rollback();
+                return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
+            }
         }
     }
 
@@ -341,9 +398,12 @@ class DataCustomer extends Controller
             $customer = Guarantor::where('id', $id)->get();
 
             $Address = GuaAddress::where('gua_id', $id)->first();
-
             $type = 'updateGuarantor';
             return view('DataCustomer.section-cus.Edit-Cus', compact('customer', 'type', 'Address'));
+        }
+        if (@$request->type == 'addGuarantor') {
+            $customer = Customer::where('id', $id)->first();
+            return view('DataCustomer.section-cus.Create-Guarantor' ,compact('customer'));
         }
         if (@$request->type == 'EditTribunalStatus') {
             $data = Customer::where('id', $id)->first();

@@ -79,6 +79,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div id='content-tracking'>
+                                
                                 @include('DataCustomer.section-contract.tab-tracking-Con')
                             </div>
                         </div>

@@ -50,7 +50,7 @@ class DataCompromise extends Controller
             $dateStart = $request->dateStart;
             $dateEnd = $request->dateEnd;
         }
-        
+
         $data = ViewLawCom::where('status_com', 'Y')
             ->when($type_time == 'date_com', function ($query) use ($dateStart, $dateEnd) {
                 return $query->whereBetween('date_com', [$dateStart, $dateEnd]);
@@ -68,7 +68,7 @@ class DataCompromise extends Controller
 
 
 
-        return view('DataCompromise.section-NewCompromise.view-com', compact('data', 'dataInstall', 'today','dateStart','dateEnd'));
+        return view('DataCompromise.section-NewCompromise.view-com', compact('data', 'dataInstall', 'today', 'dateStart', 'dateEnd'));
         // return view('DataCustomer.section-cus.view-execution', compact('data'));
 
 
@@ -83,35 +83,6 @@ class DataCompromise extends Controller
 
     public function create(Request $request)
     {
-        //
-
-        // if ($request->type == 'InsertCom') {
-
-        //     DB::beginTransaction();
-        //     try {
-        //         $Compromise = new Compromise;
-        //         $Compromise->type_com = $request->data['type_com'];
-        //         $Compromise->date_com = $request->data['date_com'];
-        //         $Compromise->pay_com = $request->data['pay_com'];
-        //         $Compromise->pay_first = $request->data['pay_first'];
-        //         $Compromise->installments = $request->data['installments'];
-        //         $Compromise->period = $request->data['period'];
-        //         $Compromise->note = $request->data['note'];
-        //         $Compromise->cus_id = $request->data['cus_id'];
-
-        //         $Compromise->save();
-        //         DB::commit();
-
-        //         $message = 'อัพเดตเรียบร้อย';
-        //         // $renderHTML =  view('DataFinance.sue-edit', compact('dataFinance', 'other'))->render();
-        //         // return response()->json(['id' => $id, 'message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
-        //         return  redirect()->route('Law.show', [$request->data['cus_id'], 'type' => 'showCus']);
-        //     } catch (\Exception $e) {
-
-        //         DB::rollback();
-        //         return response()->json(['message' => $e->getMessage(), 'code' => $e->getCode()], 500);
-        //     }
-        // }
     }
 
 
@@ -134,10 +105,12 @@ class DataCompromise extends Controller
                 $Compromise->pay_first =  str_replace(",", "", $request->data['pay_first']);
                 $Compromise->installments = $request->data['installments'];
                 $Compromise->period = str_replace(",", "", $request->data['period']);
-                $Compromise->note = $request->data['note'];
+                $Compromise->note = @$request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
                 $Compromise->interest = $request->data['interest'];
                 $Compromise->totalInterest = $request->data['totalInterest'];
+                $Compromise->not_interest = @$request->data['not_interest'];
+                $Compromise->not_interest_note = $request->data['not_interest_note'];
                 if (isset($request->data['blackout_date'])) {
                     $Compromise->blackout_date = @$request->data['blackout_date'];
                 }
@@ -562,11 +535,13 @@ class DataCompromise extends Controller
             return view('DataCustomer.section-cus.send-Appointment', compact('data', 'dataGuarantor', 'FinanceOther', 'dataFinance', 'Compro'));
         }
         if ($request->type == 'NewCompro') {
+
             $data = Customer::where('id', $id)->first();
             $Tribunal = Tribunal_debt::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             DB::beginTransaction();
             try {
                 $Compro = Compromise::where('cus_id', $id)->first();
+
                 // dd( $Compro);
                 if ($Compro == NULL) {
                     $Compro = new Compromise;
@@ -775,11 +750,12 @@ class DataCompromise extends Controller
 
         if ($request->type == 'updateCom') {
 
-
             DB::beginTransaction();
             try {
                 $Compromise = Compromise::where('id', $id)->first();
+
                 $Compromise->type_com = $request->data['type_com'];
+
                 $Compromise->date_com = $request->data['date_com'];
                 if (isset($request->data['blackout_date'])) {
                     $Compromise->blackout_date = @$request->data['blackout_date'];
@@ -795,11 +771,11 @@ class DataCompromise extends Controller
                 $Compromise->note = $request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
                 $Compromise->interest = $request->data['interest'];
+                $Compromise->not_interest = $request->data['not_interest'];
+                $Compromise->not_interest_note = $request->data['not_interest_note'];
                 $Compromise->totalSum = (float)($Compromise->pay_com) - (float)($Compromise->pay_first);
 
                 $Compromise->update();
-
-                // dd(isset($Compromise->installments));
 
                 $ComFin = ComFinance::where('cus_id', $request->data['cus_id'])
                     ->whereNot('status', 'cancel')
@@ -816,6 +792,7 @@ class DataCompromise extends Controller
                             $ComInstall->pay_amount =  $Compromise->period;
                             $ComInstall->com_id = $Compromise->id;
                             $ComInstall->no_pay = $i + 1;
+
                             if ($i > 0) {
                                 $ComInstall->due_date = Carbon::parse($date_com)->addMonths($i)->endOfMonth()->toDateString();
                             } else {
@@ -838,17 +815,14 @@ class DataCompromise extends Controller
                 $financeSum = Finance::where('cus_id', $id)->first();
 
                 $typeInstall = '';
+                DB::commit();
                 $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
                 $totalValue = $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
 
 
-                DB::commit();
+
 
                 $message = 'บันทึกเรียบร้อย';
-
-                $renderHTML = view('DataCustomer.section-contract.view', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther'))->render();
-
-                return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
             } catch (\Exception $e) {
 
                 DB::rollback();
@@ -1168,6 +1142,8 @@ class DataCompromise extends Controller
                 $interest = 0;
             }
 
+
+
             $totalSum = $totalSum + $interest;
             $array_total = ['countCom' => $countCom, 'totalSum' => $totalSum, 'DiffMonthRow' => $DiffMonthRow, 'DiffMonthcount' => $DiffMonthcount, 'interest' => $interest, 'Totalinterest' => @$Totalinterest];
 
@@ -1175,20 +1151,36 @@ class DataCompromise extends Controller
 
                 DB::beginTransaction();
                 try {
+
                     $ComInstallUpdate = ComInstall::where('id', $ComInstall[$i]->id)
                         ->whereNot('totalSum', '0')
                         ->first();
-                    // dd($ComInstallUpdate);
+
+
                     $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
+                   
+                    if ($Compro->not_interest == 'Y' && $ComInstallUpdate->no_pay == '1') {
+                        $ComInstallUpdate->interest = 0;
+                        $ComInstallUpdate->interestShow = 0;
+                        $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
+                        $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
+                        $Compro->SumInterest = $Compro->totalSum + $Compro->totalInterest;
+                        $Compro->nowInterest = ComInstall::where('com_id', $com_id)->sum('interest');
+
+                        $Compro->totalSum = ComInstall::where('com_id', $com_id)->sum('totalSum') - $Compro->nowInterest;
+
+
+                        $Compro->update();
+                        $ComInstallUpdate->update();
+                        DB::commit();
+                        continue;
+                    }
+
 
                     if ($ComInstallUpdate->interestShow == 0) {
-
+                       
                         $ComInstallUpdate->interest = $interest;
                         $ComInstallUpdate->interestShow = $interest;
-
-                        // if($ComInstallUpdate->totalSum == $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest){
-                        //     $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
-                        // }
                         $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
                     }
                     $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
@@ -1208,62 +1200,5 @@ class DataCompromise extends Controller
             }
             return $array_total;
         }
-
-        // if ($type == 'Firstinsert') {
-        //     $interest = 0;
-        // } else {
-        //     if ($countCom != 0) {
-        //         $formatRecentPayDate = Carbon::parse($ComFin[@$countCom - 1]->pay_date)->format('Y-m');
-
-        //         $recentPayDate = Carbon::parse($formatRecentPayDate);
-
-        //         $FormatStartPayDate = Carbon::parse(@$ComFin[0]->pay_date)->format('Y-m');
-
-        //         $startPayDate = Carbon::parse($FormatStartPayDate);
-
-        //         $totalMonth = $recentPayDate->diffInMonths($startPayDate);
-
-        //         if ($totalMonth < 12) {
-        //             $totalMonth = $totalMonth + 1;
-        //         }
-        //         $today = Carbon::now();
-        //         $array_Fin = [];
-
-        //         foreach ($ComFin as $i => $item) {
-        //             if ($item->status != 'ประนอมหนี้เดิม' && $item->status != 'cancel') {
-        //                 $date = date_create($item->pay_date);
-        //                 $month = date_format($date, 'm-Y');
-        //                 array_push($array_Fin, $month);
-        //             }
-        //         }
-        //         $countArray_Fin = count(array_unique($array_Fin));
-
-        //         $DiffMonthcount = $totalMonth - $countArray_Fin;
-
-        //         $DiffMonthRow = $recentPayDate->diffInMonths($today) - 1;
-
-        //         if ($DiffMonthRow < 0) {
-        //             $DiffMonthRow = 0;
-        //         }
-        //         $interest = ceil((($totalSum * (@$Compro->interest / 100)) / 12) * $DiffMonthRow);
-        //     } else {
-        //         $ComdateFomat = Carbon::parse($Compro->date_com)->format('Y-m');
-        //         $Comdate = Carbon::parse($ComdateFomat);
-        //         $todayFormat = Carbon::now()->format('Y-m');
-        //         $today = Carbon::parse($todayFormat);
-        //         $diffMonth = $Comdate->diffInMonths($today);
-        //         $DiffMonthRow = $Comdate->diffInMonths($today);
-
-        //         // dd($DiffMonthRow);
-        //         if ($diffMonth > 1) {
-        //             $interest = ceil((($totalSum * (@$Compro->interest / 100)) / 12) * $diffMonth);
-        //         } else {
-        //             $interest = 0;
-        //         }
-        //     }
-        // }
-
-
-
     }
 }
