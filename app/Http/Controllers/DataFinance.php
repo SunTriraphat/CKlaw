@@ -1339,27 +1339,33 @@ class DataFinance extends Controller
 
             DB::beginTransaction();
             try {
-                $LawFinFuture = LawFinFuture::where('id', $request->data['fin_id'])->first();
+                $LawFinFuture = LawFinFuture::where('id', @$request->data['fin_id'])->first();
                 $Finance = Finance::where('id', $id)->first();
                 $Finance->status = $request->data['status'];
                 if ($request->data['status'] == 'อนุมัติ') {
                     $Finance->Date_approved = date("Y-m-d");
+                    if($LawFinFuture != null){
+                        $LawFinFuture->amount -= $Finance->totalsum;
+                        $LawFinFuture->update();
 
-                    $LawFinFuture->amount -= $Finance->totalsum;
+                    }
+                    
                 } elseif ($request->data['status'] == 'รออนุมัติ') {
                     $Finance->Date_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ขอยกเลิก') {
 
                     $Finance->Date_cancel_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ยกเลิก') {
-                    $LawFinFuture->amount += $Finance->totalsum;
+                    if($LawFinFuture != null){
+                        $LawFinFuture->amount += $Finance->totalsum;
+                        $LawFinFuture->update();
+                    }
                     $Finance->Date_cancel = date("Y-m-d");
                 }
 
 
                 $Finance->update();
-                $LawFinFuture->update();
-
+                
                 DB::commit();
 
                 $type = $request->type;

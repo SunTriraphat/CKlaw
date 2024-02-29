@@ -23,7 +23,7 @@ class DomPdfController extends Controller
 		//         'date' => date('d/m/Y'),    
 		// ];
 
-		dd('sadasd');
+		
 		$view = view('ExportPDF.form-finance-pdf');
 		$html = $view->render();
 		$pdf = new PDF();

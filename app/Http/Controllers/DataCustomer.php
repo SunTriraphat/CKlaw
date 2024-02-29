@@ -61,6 +61,7 @@ class DataCustomer extends Controller
         // Store your user in database 
 
         if (@$request->type == 'importSeachCus') {
+            
             if ($request->plaintiff == 'RSFHP') {
                 $data = DB::connection('ibmi2')
                     ->table('RSFHP.ARMAST')
@@ -227,6 +228,7 @@ class DataCustomer extends Controller
         if (@$request->type == 'SearchCus') {
             // ค้นหาตามเลขสัญญา
             if ($request->plaintiff == 'RSFHP') {
+                
                 $data = DB::connection('ibmi2')
                     ->table('RSFHP.ARMAST')
                     ->leftJoin('RSFHP.CUSTMAST', 'RSFHP.ARMAST.CUSCOD', '=', 'RSFHP.CUSTMAST.CUSCOD')
@@ -247,7 +249,7 @@ class DataCustomer extends Controller
                 $data_cusfollow = DB::connection('ibmi2')->select("SELECT * FROM PSFHP.VWLET_ARMGAR WHERE CONTNO = '${con_no}' ");
             }
 
-
+            
 
             // ค้นหาตามเลขบัตรประชาชน
             $data2 = DB::connection('ibmi2')
