@@ -2,6 +2,10 @@
 
 
    <div class="row mb-2 g-1">
+    <a data-link="{{ route('Cus.show', $data->id) }}?type={{ 'addGuarantor' }}" data-bs-toggle="modal"
+        data-bs-target="#modal-xl" type="button" class="btn-sm float-end btn btn-light rounded-circle">
+        <i class="fa-solid fa-pen-to-square"></i> เพิ่มผู้ค้ำ
+    </a>
        @foreach ($dataGuarantor as $i => $dataGuarantor)
            <div class="col-12">
                {{-- ข้อมูลสัญญา --}}

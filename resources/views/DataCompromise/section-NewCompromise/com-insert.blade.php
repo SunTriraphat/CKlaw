@@ -74,7 +74,8 @@
                 <div class="col-sm-6 ">
                     <div class="mb-3 input-bx">
                         <span>ยอดประนอมหนี้</span>
-                        <input type="text"class="form-control" value="{{ number_format(@$data->totalSum - @$data->ComToTeamExe->check_balance) }}"
+                        <input type="text"class="form-control"
+                            value="{{ number_format(@$data->totalSum - @$data->ComToTeamExe->check_balance) }}"
                             onkeyup="autoCurrenncy()" name="pay_com" id="pay_com" required placeholder=" " />
                         <input type="hidden"class="form-control" value="{{ trim(@$data->cus_id) }}" name="cus_id"
                             id="cus_id" required placeholder=" " />
@@ -116,27 +117,41 @@
 
 
                 </div>
-
-
-            </div>
-            <div class="row">
-                <div class="mb-3 input-bx">
-                    <span>หมายเหตุ</span>
-                    <textarea class="form-control" name="note" id="note" required></textarea>
+                <div class="col-sm-6 ">
+                    <div>
+                        <input type="checkbox" value="Y" id="not_interest" name="not_interest" />
+                        <label for="not_interest">ไม่คิดดอกเบี้ยเดือนแรก</label>
+                    </div>
                 </div>
-
+                <div class="col-sm-6 ">
+                    <div class="mb-3 input-bx">
+                        <span>หมายเหตุ</span>
+                        <input type="text"class="form-control" name="not_interest_note" id="not_interest_note"
+                            required placeholder=" " />
+                    </div>
+                </div>
             </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary " id="saveEditBtn">บันทึก</button>
-                <button type="button" class="btn btn-danger " class="close" data-bs-dismiss="modal"
-                    aria-label="Close">ปิด</button>
-            </div>
-
-        </form>
 
 
     </div>
+    <div class="row">
+        <div class="mb-3 input-bx">
+            <span>หมายเหตุ</span>
+            <textarea class="form-control" name="note" id="note" required></textarea>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary " id="saveEditBtn">บันทึก</button>
+        <button type="button" class="btn btn-danger " class="close" data-bs-dismiss="modal"
+            aria-label="Close">ปิด</button>
+    </div>
+
+    </form>
+
+
+</div>
 
 
 </div>

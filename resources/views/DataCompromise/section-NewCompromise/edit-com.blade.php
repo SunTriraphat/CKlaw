@@ -43,21 +43,21 @@
                         {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
                         <input type="date" lang="th-th" value="{{ trim(@$data->date_com_start) }}"
                             name="date_com_start" id="date_com_start" class="form-control">
-                            <input type="hidden"class="form-control" value="{{ trim(@$data->id) }}" name="id"
+                        <input type="hidden"class="form-control" value="{{ trim(@$data->id) }}" name="id"
                             id="id" required placeholder=" " />
 
                     </div>
-                   
-                    @if(@$data->levels == 'ชั้นบังคับคดี')
-                    <div class="mb-3 input-bx">
-                        <span>วันที่ครบงด</span>
-                        {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
-                        <input type="date" lang="th-th" value="{{ trim(@$data->blackout_date) }}"
-                            name="blackout_date" id="blackout_date" class="form-control">
 
-                    </div>
+                    @if (@$data->levels == 'ชั้นบังคับคดี')
+                        <div class="mb-3 input-bx">
+                            <span>วันที่ครบงด</span>
+                            {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
+                            <input type="date" lang="th-th" value="{{ trim(@$data->blackout_date) }}"
+                                name="blackout_date" id="blackout_date" class="form-control">
+
+                        </div>
                     @endif
-                  
+
 
 
 
@@ -71,13 +71,13 @@
                     <div class="mb-3 input-bx">
                         <span>ระยะเวลาผ่อน</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->installments) }}"
-                            name="installments" id="installments" required placeholder=" " readonly/>
+                            name="installments" id="installments" required placeholder=" " readonly />
                     </div>
 
 
 
 
-                    
+
 
                 </div>
                 <div class="col-sm-6 ">
@@ -100,14 +100,14 @@
                             id="date_com" class="form-control">
 
                     </div>
-                    @if(@$data->levels == 'ชั้นบังคับคดี')
-                    <div class="mb-3 input-bx">
-                        <span>งดการขายวันที่</span>
-                        {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
-                        <input type="date" lang="th-th" value="{{ trim(@$data->stop_date) }}" name="stop_date"
-                            id="stop_date" class="form-control" disabled>
+                    @if (@$data->levels == 'ชั้นบังคับคดี')
+                        <div class="mb-3 input-bx">
+                            <span>งดการขายวันที่</span>
+                            {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
+                            <input type="date" lang="th-th" value="{{ trim(@$data->stop_date) }}" name="stop_date"
+                                id="stop_date" class="form-control" disabled>
 
-                    </div>
+                        </div>
                     @endif
 
                     <div class="mb-3 input-bx">
@@ -126,14 +126,25 @@
 
 
                 </div>
-
-
+                <div class="col-sm-6 ">
+                    <div>
+                        <input type="checkbox" value="Y"  {{ $data->not_interest == 'Y' ? 'checked disabled' : '' }} id="not_interest" name="not_interest" />
+                        <label for="not_interest">ไม่คิดดอกเบี้ยเดือนแรก</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 ">
+                    <div class="mb-3 input-bx">
+                        <span>หมายเหตุ</span>
+                        <input type="text"class="form-control" name="not_interest_note" id="not_interest_note"
+                            required placeholder=" " />
+                    </div>
+                </div>
             </div>
 
             <div class="row">
                 <div class="mb-3 input-bx">
                     <span>หมายเหตุ</span>
-                    <textarea class="form-control" name="note" id="note" required>{{@$data->note}}</textarea>
+                    <textarea class="form-control" name="note" id="note" required>{{ @$data->note }}</textarea>
                 </div>
                 {{-- <div>
                         <input type="checkbox" value="Y" id="status" name="status"
@@ -186,8 +197,9 @@
 
         let installments = document.getElementById("installments");
         let pay_first = document.getElementById("pay_first");
-     
-        installments.value = Math.ceil((parseFloat(pay_com.value.replace(",", ""))-parseFloat(pay_first.value.replace(",", ""))) / parseFloat(period.value)).toFixed(
+
+        installments.value = Math.ceil((parseFloat(pay_com.value.replace(",", "")) - parseFloat(pay_first.value.replace(
+            ",", ""))) / parseFloat(period.value)).toFixed(
             2);
         // period.value = period.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -216,7 +228,7 @@
             } else {
                 var mm = (date_com_start.getMonth() + 1);
             }
-           
+
             var y = date_com_start.getFullYear() + 1;
             $('#blackout_date').val(y + '-' + mm + '-' + dd);
         })
@@ -285,40 +297,40 @@
             let date_com = $('#date_com').val();
             let link = "{{ route('LawCom.update', 'id') }}?type={{ 'updateCom' }}";
             let url = link.replace('id', id);
-            if (interest != '' && period != ''&& pay_first != ''&& pay_com != '' && date_com != '') {
-            $.ajax({
-                url: url,
-                method: "PUT",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    data: data,
-                },
+            if (interest != '' && period != '' && pay_first != '' && pay_com != '' && date_com != '') {
+                $.ajax({
+                    url: url,
+                    method: "PUT",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        data: data,
+                    },
 
-                success: function(result) {
+                    success: function(result) {
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: `SUCCESS `,
-                        showConfirmButton: false,
-                        text: result.message,
-                        timer: 1500
-                    });
-                    $('#modal-xl').modal('hide');
-                    location.reload();
-                },
-                error: function(err) {
-                    console.log(err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: `ERROR ` + err.status + ` !!!`,
-                        text: err.responseJSON.message,
-                        showConfirmButton: true,
-                    });
+                        Swal.fire({
+                            icon: 'success',
+                            title: `SUCCESS `,
+                            showConfirmButton: false,
+                            text: result.message,
+                            timer: 1500
+                        });
+                        $('#modal-xl').modal('hide');
+                        location.reload();
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: `ERROR ` + err.status + ` !!!`,
+                            text: err.responseJSON.message,
+                            showConfirmButton: true,
+                        });
 
-                    // $('#modal_xl_2').modal('hide');
+                        // $('#modal_xl_2').modal('hide');
 
-                }
-            });
+                    }
+                });
             } else {
                 Swal.fire({
                     icon: 'error',

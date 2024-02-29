@@ -8,48 +8,43 @@
                 {{-- <img src="{{ URL::asset('\assets/images/calculator.png') }}" alt="" style="width: 40px;"> --}}
             </div>
             <div class="flex-grow-1 overflow-hidden">
-                <h5 class="text-primary fw-semibold pb-2">แก้ไขข้อมูล</h5>
+                <h5 class="text-primary fw-semibold pb-2">เพิ่มผู้ค้ำ</h5>
                 <p class="border-primary border-bottom mb-0"></p>
 
             </div>
         </div>
     </div>
 
-    @foreach ($customer as $key => $item)
-   
+
         <div class="modal-body">
             <div class="col-12 mt-3">
                 <form id='edit_cus' enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-sm-6">
 
-                            {{-- <div class="mb-3 ">
-                                <span>เลขที่สัญญา</span>
-                                <input type="text"class="form-control" value="{{ trim(@$item->CON_NO) }}"
-                                    name="CON_NO" id="CON_NO" required placeholder=" " />
-                                
-                            </div> --}}
+                           
+                                <input type="hidden"class="form-control" value="{{ trim(@$customer->id) }}"
+                                    name="cus_id" id="cus_id" required placeholder=" " />
+                           
                             <div class="mb-3 input-bx">
                                 <span>เลขบัตรประชาชน</span>
-                                <input type="text" class="form-control input-mask" value="{{ trim(@$item->ID_num) }}"
+                                <input type="text" class="form-control input-mask"
                                     name="ID_num" id="ID_num" data-inputmask="'mask': '9-9999-99999-99-9'"
                                     data-bs-toggle="tooltip" title="เลขบัตรประชาชน" required />
                             </div>
                             <div class="mb-3 input-bx">
                                 <span>ชื่อ</span>
-                                <input type="text" class="form-control" value="{{ trim(@$item->name) }}"
+                                <input type="text" class="form-control" 
                                     name="name" id="name" required placeholder=" " />
-                                <input type="hidden"class="form-control" value="{{ trim(@$item->id) }}" name="id"
+                                <input type="hidden"class="form-control"  name="id"
                                     id="id" required placeholder=" " />
-                                <input type="hidden"class="form-control" value="{{ trim(@$item->cus_id) }}"
-                                    name="cus_id" id="cus_id" required placeholder=" " />
-                                <input type="hidden"class="form-control" value="{{ $type }}" name="type"
-                                    id="type" required placeholder=" " />
+                                
+                               
                             </div>
                             <div class="mb-3 input-bx">
                                 <span>เบอร์โทร</span>
                                 <input type="text" class="form-control input-mask"
-                                    value="{{ trim(@$item->PhoneNum) }}" name="PhoneNum" id="PhoneNum"
+                                     name="PhoneNum" id="PhoneNum"
                                     data-bs-toggle="tooltip" data-inputmask="'mask': '999-9999999'" required
                                     placeholder="" />
                             </div>
@@ -66,18 +61,18 @@
 
                                 <select value="{{ @$item->prefix }}" class="form-select addOPR" id="prefix"
                                     name="prefix" required>
-                                    <option {{ @$item->prefix == 'นาย' ? 'selected' : '' }} value="นาย">นาย
+                                    <option value="นาย">นาย
                                     </option>
-                                    <option {{ @$item->prefix == 'นาง' ? 'selected' : '' }} value="นาง">นาง
+                                    <option value="นาง">นาง
                                     </option>
-                                    <option {{ @$item->prefix == 'นางสาว' ? 'selected' : '' }} value="นางสาว">นางสาว
+                                    <option value="นางสาว">นางสาว
                                     </option>
                                 </select>
 
                             </div>
                             <div class="mb-3 input-bx">
                                 <span>นามสกุล</span>
-                                <input type="text" class="form-control" value="{{ trim(@$item->surname) }}"
+                                <input type="text" class="form-control" 
                                     name="surname" id="surname" required />
                             </div>
 
@@ -240,7 +235,7 @@
 
 
         </div>
-    @endforeach
+ 
 
 </div>
 <script>
@@ -285,7 +280,7 @@
 
 
             console.log(data);
-            let id = $('#id').val();
+            let cus_id = $('#cus_id').val();
             console.log(id);
             let name = $('#name').val();
             let surname = $('#surname').val();
@@ -298,15 +293,15 @@
             let PhoneNum = $('#PhoneNum').val();
 
 
-            let link = `{{ route('Cus.update', 'id') }}?type=${type}`;
-            let url = link.replace('id', id);
-            console.log(url);
+         
+           
+            
             // if (name != '' && surname != '' && prefix != '' && ID_num != '' && PhoneNum !=
             //     '') {
 
             $.ajax({
-                url: url,
-                method: "PUT",
+                url:"{{ route('Cus.store') }}?type={{ 'CreateGuarantor' }}",
+                method: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
                     data: data,
