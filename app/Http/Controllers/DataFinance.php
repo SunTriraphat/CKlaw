@@ -68,7 +68,7 @@ class DataFinance extends Controller
 
 
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -131,7 +131,7 @@ class DataFinance extends Controller
                 $Finance->note = $request->data['note'];
                 $Finance->date_fin = date('Y-m-d');
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -190,7 +190,7 @@ class DataFinance extends Controller
                 $Finance->date_fin = date('Y-m-d');
 
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -249,7 +249,7 @@ class DataFinance extends Controller
 
                 $Finance->levels = 'ขั้นตั้งเจ้าพนักงาน';
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -310,7 +310,7 @@ class DataFinance extends Controller
                 $Finance->date_fin = date('Y-m-d');
 
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -370,7 +370,7 @@ class DataFinance extends Controller
                 $Finance->note = $request->data['note'];
                 $Finance->date_fin = date('Y-m-d');
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -435,7 +435,7 @@ class DataFinance extends Controller
                 $Finance->note = $request->data['note'];
                 $Finance->date_fin = date('Y-m-d');
                 if ($request->data['Finfuture'] == 'Y') {
-                    $Finance->id_finFuture = $request->data['fin_id'];
+                    $Finance->id_finFuture = @$request->data['fin_id'];
                 } else {
                     $Finance->id_finFuture = NULL;
                 }
@@ -685,7 +685,7 @@ class DataFinance extends Controller
             }
 
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -777,7 +777,7 @@ class DataFinance extends Controller
             $Finance->levels = 'ขั้นคัดโฉนด';
             $Finance->note = $request->data['note'];
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -880,7 +880,7 @@ class DataFinance extends Controller
                 $Finance->update();
             }
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -983,7 +983,7 @@ class DataFinance extends Controller
             $Finance->Applicant = $request->data['Applicant'];
             $Finance->note = $request->data['note'];
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -1073,7 +1073,7 @@ class DataFinance extends Controller
             $Finance->levels = 'ขั้นสืบพยาน';
             $Finance->note = $request->data['note'];
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -1161,7 +1161,7 @@ class DataFinance extends Controller
             $Finance->levels = 'ขั้นส่งคำบังคับ';
             $Finance->note = $request->data['note'];
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -1261,7 +1261,7 @@ class DataFinance extends Controller
             }
             $Finance->note = $request->data['note'];
             if ($request->data['Finfuture'] == 'Y') {
-                $Finance->id_finFuture = $request->data['fin_id'];
+                $Finance->id_finFuture = @$request->data['fin_id'];
             } else {
                 $Finance->id_finFuture = NULL;
             }
@@ -1339,13 +1339,16 @@ class DataFinance extends Controller
 
             DB::beginTransaction();
             try {
-                $LawFinFuture = LawFinFuture::where('id', $request->data['fin_id'])->first();
+                $LawFinFuture = LawFinFuture::where('id', @$request->data['fin_id'])->first();
                 $Finance = Finance::where('id', $id)->first();
                 $Finance->status = $request->data['status'];
                 if ($request->data['status'] == 'อนุมัติ') {
                     $Finance->Date_approved = date("Y-m-d");
-
-                    $LawFinFuture->amount -= $Finance->totalsum;
+                    if($LawFinFuture != null){
+                        $LawFinFuture->amount -= $Finance->totalsum;
+                        $LawFinFuture->update();
+                    }
+                   
                 } elseif ($request->data['status'] == 'รออนุมัติ') {
                     $Finance->Date_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ขอยกเลิก') {
@@ -1358,7 +1361,7 @@ class DataFinance extends Controller
 
 
                 $Finance->update();
-                $LawFinFuture->update();
+               
 
                 DB::commit();
 
