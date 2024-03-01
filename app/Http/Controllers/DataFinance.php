@@ -1347,7 +1347,7 @@ class DataFinance extends Controller
                     if($LawFinFuture != null){
                         $LawFinFuture->amount -= $Finance->totalsum;
                         $LawFinFuture->update();
-
+                    }
                 } elseif ($request->data['status'] == 'รออนุมัติ') {
                     $Finance->Date_request = date("Y-m-d");
                 } elseif ($request->data['status'] == 'ขอยกเลิก') {

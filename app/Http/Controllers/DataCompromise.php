@@ -110,7 +110,7 @@ class DataCompromise extends Controller
                 $Compromise->interest = $request->data['interest'];
                 $Compromise->totalInterest = $request->data['totalInterest'];
                 $Compromise->not_interest = @$request->data['not_interest'];
-                $Compromise->not_interest_note = $request->data['not_interest_note'];
+                $Compromise->not_interest_note = @$request->data['not_interest_note'];
                 if (isset($request->data['blackout_date'])) {
                     $Compromise->blackout_date = @$request->data['blackout_date'];
                 }
@@ -771,7 +771,7 @@ class DataCompromise extends Controller
                 $Compromise->note = $request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
                 $Compromise->interest = $request->data['interest'];
-                $Compromise->not_interest = $request->data['not_interest'];
+                $Compromise->not_interest = @$request->data['not_interest'];
                 $Compromise->not_interest_note = $request->data['not_interest_note'];
                 $Compromise->totalSum = (float)($Compromise->pay_com) - (float)($Compromise->pay_first);
 
