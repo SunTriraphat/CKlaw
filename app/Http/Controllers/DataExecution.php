@@ -524,6 +524,7 @@ class DataExecution extends Controller
                 $Execution->some_land_price = $request->data['some_land_price'];
                 $Execution->land_con = $request->data['land_con'];
                 $Execution->land_price = $request->data['land_price'];
+                $Execution->estimate = $request->data['estimate'];
                 $Execution->note_3 = $request->data['note_3'];
 
                 if ($request->data['status'] == 'Y') {

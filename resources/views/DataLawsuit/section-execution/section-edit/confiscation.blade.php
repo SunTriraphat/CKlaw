@@ -102,13 +102,13 @@
                     </div>
                     <div class="mb-3 input-bx">
                         <span>
-                            โฉนดเลขที่</span>
+                            โฉนดที่ดินเลขที่</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->deed_no) }}" name="deed_no"
                             id="deed_no" required placeholder=" " />
                     </div>
                     <div class="mb-3 input-bx">
                         <span>
-                            ที่ตามโฉนดที่ดิน</span>
+                            เนื้อที่ตามโฉนดที่ดิน</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->land_deed) }}" name="land_deed"
                             id="land_deed" required placeholder=" " />
                     </div>
@@ -126,7 +126,7 @@
                     </div>
                     <div class="mb-3 input-bx">
                         <span>
-                            ราคาที่ดินประมาณ </span>
+                            ราคาที่ดินทั้งแปลงประมาณเป็นเงิน </span>
                         <input type="text"class="form-control" value="{{ trim(@$data->some_land_price) }}" name="some_land_price"
                             id="some_land_price" required placeholder=" " />
                     </div>
@@ -139,9 +139,15 @@
                     </div>
                     <div class="mb-3 input-bx">
                         <span>
-                            ราคาที่ดินเป็นเงิน</span>
+                            ราคาประมาณเป็นเงิน</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->land_price) }}" name="land_price"
                             id="land_price" required placeholder=" " />
+                    </div>
+                    <div class="mb-3 input-bx">
+                        <span>
+                            ราคาประเมิณรวม</span>
+                        <input type="text"class="form-control" value="{{ trim(@$data->estimate) }}" name="estimate"
+                            id="estimate" required placeholder=" " />
                     </div>
 
                     <div class="mb-3 input-bx">

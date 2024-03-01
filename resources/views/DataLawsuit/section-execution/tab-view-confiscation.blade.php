@@ -43,11 +43,11 @@
                         <td class="text-end">{{ @$data->property }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">โฉนดเลขที่</th>
+                        <th class="text-start">โฉนดที่ดินเลขที่</th>
                         <td class="text-end">{{@$data->deed_no }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">ที่ตามโฉนดที่ดิน</th>
+                        <th class="text-start">เนื้อที่ตามโฉนดที่ดิน</th>
                         <td class="text-end">{{ @$data->land_deed }}</td>
                     </tr>
                     <tr>
@@ -59,7 +59,7 @@
                         <td class="text-end">{{ @$data->mortgage_income }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">ราคาที่ดินประมาณ</th>
+                        <th class="text-start">ราคาที่ดินทั้งแปลงประมาณเป็นเงิน</th>
                         <td class="text-end">{{@$data->some_land_price }}</td>
                     </tr>
                     <tr>
@@ -67,8 +67,12 @@
                         <td class="text-end">{{ @$data->land_con }}</td>
                     </tr>
                     <tr>
-                        <th class="text-start">ราคาที่ดินเป็นเงิน</th>
+                        <th class="text-start">ราคาประมาณเป็นเงิน</th>
                         <td class="text-end">{{ @$data->land_price }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">ราคาประเมิณรวม</th>
+                        <td class="text-end">{{ @$data->estimate }}</td>
                     </tr>
                    
                 </table>
