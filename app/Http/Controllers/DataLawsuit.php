@@ -330,7 +330,7 @@ class DataLawsuit extends Controller
         if (@$request->type == 'statusClose') {
 
             $data = Customer::where('id', $id)->first();
-
+            
             return view('DataLawsuit.section-court.close-status', compact('data'));
         }
     }

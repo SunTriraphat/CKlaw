@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-@section('DataCus', 'active')
+@section('LawFinFuture', 'active')
 
 <div class="row g-1">
 

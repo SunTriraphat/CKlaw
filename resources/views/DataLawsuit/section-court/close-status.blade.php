@@ -59,18 +59,37 @@
                     <div class="mb-3 input-bx">
                         <span>ยอดหนี้</span>
                         @php
-                            $totalClose = @$data->CusToCom->totalSum - @$data->CusToExe->check_balance;
+                            if(@$data->CusToCom->totalSum != NULL && @$data->CusToCom != NULL){ 
+                                $totalClose = @$data->CusToCom->totalSum - @$data->CusToExe->check_balance;
+                            }else{
+                                $totalClose = @$data->CusToTri->debt_balance;
+                            }
+                            
                             if ($totalClose < 0) {
                                 $totalClose = 0;
-                            }
+                            }   
                         @endphp
-                        <input type="text"class="form-control"
-                            value="{{ ($data->CusToCom->totalSum == null
+                        {{-- <input type="text"class="form-control"
+                            value="{{ 
+                            ($data->CusToCom->totalSum == null
                                     ? trim(@$data->CusToTri->debt_balance)
                                     : $data->CusToCom->status == 'close')
                                 ? trim(@$totalClose)
                                 : trim(@$data->CusToCom->totalSum) }}"
+                            name="total_sum" id="total_sum" required placeholder=" " readonly /> --}}
+                            
+                        <input type="text"class="form-control"
+                            value="{{ 
+                             $data->CusToCom != null ?
+                            ( 
+                                 $data->CusToCom->totalSum == null
+                                    ? trim(@$data->CusToTri->debt_balance)
+                                    : $data->CusToCom->status == 'close')
+                                ? trim(@$totalClose)
+                                : trim(@$data->CusToCom->totalSum)
+                            : trim(@$data->CusToTri->debt_balance)}}"
                             name="total_sum" id="total_sum" required placeholder=" " readonly />
+
                         {{-- <input type="text"class="form-control"
                             value="{{ $data->CusToCom->totalSum != null 
                             ? $data->CusToCom->status == 'ประนอมหนี้เดิม' 

@@ -76,6 +76,7 @@
                         {{-- <a class="collapse-item @yield('DataCus') "   href="{{ route('Cus.index') }}?type={{'Datacus'}}"><i class="fa-solid fa-phone-volume"></i> ลูกหนี้ ชั้นเตรียมฟ้อง</a> --}}
                         <a class="collapse-item @yield('LawTrak')" href="{{ route('LawTrack.index') }}"><i class="fa-solid fa-phone-volume"></i> ปฏิทินทนาย</a>
                         <a class="collapse-item @yield('LawFinFuture')" href="{{ route('Fin.index') }}?type={{ 'LawFinFuture' }}" ><i class="fa-solid fa-phone-volume"></i> เบิกเงินล่วงหน้า</a>
+                        <a class="collapse-item @yield('NotAppFin')" href="{{ route('Fin.index') }}?type={{ 'NotAppFin' }}" ><i class="fa-solid fa-phone-volume"></i> รายการเบิกที่รออนุมัติ</a>
                        
                     </div>
                 </div>

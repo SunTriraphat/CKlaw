@@ -36,6 +36,16 @@ class DataFinance extends Controller
 
             return view('DataFinance.LawFuture.view-finfuture', compact('LawFin', 'LawFinPerson'));
         }
+         elseif ($request->type == 'NotAppFin') {
+
+             $data = DB::table('Notapp')
+             ->where('status','รออนุมัติ')
+             ->distinct()
+             ->get();
+          
+            
+            return view('DataFinance.not-app',compact('data'));
+        }
     }
 
 
@@ -1335,8 +1345,6 @@ class DataFinance extends Controller
         }
 
         if ($request->type == 'UpdateFin') {
-
-
             DB::beginTransaction();
             try {
                 $LawFinFuture = LawFinFuture::where('id', @$request->data['fin_id'])->first();

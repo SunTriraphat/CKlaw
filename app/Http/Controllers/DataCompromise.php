@@ -153,8 +153,8 @@ class DataCompromise extends Controller
                 }
 
                 $type = '';
-                $this->calInterest($request->data['cus_id'], $type, $Compromise->id);
-                $totalValue = $this->calInterest($request->data['cus_id'], $type, $Compromise->id);
+                // $this->calInterest($request->data['cus_id'], $type, $Compromise->id);
+                // $totalValue = $this->calInterest($request->data['cus_id'], $type, $Compromise->id);
 
                 $type = $request->type;
                 $data = Tribunal_debt::where('cus_id', $request->data['cus_id'])->orderBy('id', 'DESC')->first();
@@ -173,7 +173,7 @@ class DataCompromise extends Controller
                 // $renderHTML2 = view('DataCompromise.Finance-com.install-table', compact('ComFin', 'Compro', 'ComFinTotal', 'ComInstall'))->render();
                 // return response()->json(['com' => $renderHTML, 'install' => $renderHTML2]);
 
-                $renderHTML = view('DataCustomer.section-contract.view', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther', 'totalValue'))->render();
+                $renderHTML = view('DataCustomer.section-contract.view', compact('data', 'dataStatus', 'type', 'dataGuarantor', 'customer', 'finance', 'financeOther'))->render();
                 return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
             } catch (\Exception $e) {
 
@@ -587,8 +587,8 @@ class DataCompromise extends Controller
                     ->get();
 
                 $type = '';
-                $this->calInterest($id, $type, $Compro->id);
-                $totalValue = $this->calInterest($id, $type, $Compro->id);
+                // $this->calInterest($id, $type, $Compro->id);
+                // $totalValue = $this->calInterest($id, $type, $Compro->id);
                 $status_tag = '';
                 $Tracking = Tracking::where('com_id', $Compro->id)->get();
 
@@ -615,7 +615,8 @@ class DataCompromise extends Controller
                 $message = 'บันทึกเรียบร้อย';
                 // $renderHTML = view('DataCompromise.section-NewCompromise.view', compact('data'))->render();
 
-                return  view('DataCompromise.section-NewCompromise.view', compact('data', 'dataGuarantor', 'customer', 'Compro', 'ComFin', 'totalValue', 'ComFinTotal', 'CountExe', 'Tribunal', 'ComInstall', 'status_tag', 'Tracking', 'today'));
+                // return  view('DataCompromise.section-NewCompromise.view', compact('data', 'dataGuarantor', 'customer', 'Compro', 'ComFin', 'totalValue', 'ComFinTotal', 'CountExe', 'Tribunal', 'ComInstall', 'status_tag', 'Tracking', 'today'));
+                return  view('DataCompromise.section-NewCompromise.view', compact('data', 'dataGuarantor', 'customer', 'Compro', 'ComFin', 'ComFinTotal', 'CountExe', 'Tribunal', 'ComInstall', 'status_tag', 'Tracking', 'today'));
 
                 // return response()->json(['message' => $message, 'success' => '1', 'code' => 200, $renderHTML]);
                 // return  redirect()->route('Law.show', [$request->id, 'type' => 'showCus']);
@@ -630,11 +631,12 @@ class DataCompromise extends Controller
 
             $data =  Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             $type = '';
-            $this->calInterest($id, $type, $data->id);
-            $totalValue = $this->calInterest($id, $type, $data->id);
+            // $this->calInterest($id, $type, $data->id);
+            // $totalValue = $this->calInterest($id, $type, $data->id);
 
             // $Compro = Compromise::where('cus_id', $id)->orderBy('id','DESC')->first();
-            return view('DataCompromise.section-NewCompromise.edit-com', compact('data', 'totalValue'));
+            // return view('DataCompromise.section-NewCompromise.edit-com', compact('data', 'totalValue'));
+            return view('DataCompromise.section-NewCompromise.edit-com', compact('data'));
         }
         if ($request->type == 'InsertCom') {
             $ComFin = ComFinance::where('cus_id', $id)
@@ -644,34 +646,34 @@ class DataCompromise extends Controller
             $data =  Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             $Cus = Customer::where('id', $id)->first();
 
-            $this->calInterest($id, $type, $data->id);
-            $totalValue = $this->calInterest($id, $type, $data->id);
+            // $this->calInterest($id, $type, $data->id);
+            // $totalValue = $this->calInterest($id, $type, $data->id);
 
             // $data = Compromise::where('cus_id', $id)->get();
             $data =  Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
 
 
-            return view('DataCompromise.section-NewCompromise.com-insert', compact('data', 'ComFin', 'totalValue', 'Cus'));
+            return view('DataCompromise.section-NewCompromise.com-insert', compact('data', 'ComFin', 'Cus'));
         }
         if ($request->type == 'InsertComFin') {
 
             $data =  Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             $type = '';
 
-            $this->calInterest($id, $type, $data->id);
-            $totalValue = $this->calInterest($id, $type, $data->id);
+            // $this->calInterest($id, $type, $data->id);
+            // $totalValue = $this->calInterest($id, $type, $data->id);
 
-            return view('DataCompromise.Finance-com.insert-finance', compact('data', 'totalValue'));
+            return view('DataCompromise.Finance-com.insert-finance', compact('data'));
         }
         if ($request->type == 'InsertComFinForward') {
 
             $data =  Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
             $type = '';
 
-            $this->calInterest($id, $type, $data->id);
-            $totalValue = $this->calInterest($id, $type, $data->id);
+            // $this->calInterest($id, $type, $data->id);
+            // $totalValue = $this->calInterest($id, $type, $data->id);
 
-            return view('DataCompromise.Finance-com.Forward-finance', compact('data', 'totalValue'));
+            return view('DataCompromise.Finance-com.Forward-finance', compact('data'));
         }
         if ($request->type == 'showComFinDetail') {
 
@@ -690,6 +692,11 @@ class DataCompromise extends Controller
 
             return view('DataCompromise.Finance-com.edit-finance', compact('data', 'maxId'));
         }
+        // if ($request->type == 'updateAll') {
+        //     dd('ddddd');
+        //     // $ComInstall = ComInstall::where('com_id', $request->com_id)->get();
+        // }
+
     }
 
 
@@ -816,8 +823,8 @@ class DataCompromise extends Controller
 
                 $typeInstall = '';
                 DB::commit();
-                $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
-                $totalValue = $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
+                // $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
+                // $totalValue = $this->calInterest($request->data['cus_id'], $typeInstall, $Compromise->id);
 
 
 
@@ -1075,12 +1082,12 @@ class DataCompromise extends Controller
 
                 $Compro->update();
                 $type = '';
-                $this->calInterest($request->data['cus_id'], $type);
-                $totalValue = $this->calInterest($request->data['cus_id'], $type);
+                // $this->calInterest($request->data['cus_id'], $type);
+                // $totalValue = $this->calInterest($request->data['cus_id'], $type);
 
 
                 $message = 'อัพเดตเรียบร้อย';
-                $renderHTML = view('DataCompromise.Finance-com.com-table', compact('ComFin', 'Compro', 'totalValue', 'ComFinTotal'))->render();
+                $renderHTML = view('DataCompromise.Finance-com.com-table', compact('ComFin', 'Compro', 'ComFinTotal'))->render();
                 return response()->json([$renderHTML]);
             } catch (\Exception $e) {
 
@@ -1091,6 +1098,10 @@ class DataCompromise extends Controller
         if ($request->type == 'UpdateTotalCom') {
             $ComInstall = ComInstall::where('com_id', $request->com_id)->get();
         }
+        if ($request->type == 'updateAll') {
+            // $this->calInterest();
+            dump($this->calInterest());
+        }
     }
 
     public function destroy($id)
@@ -1098,107 +1109,210 @@ class DataCompromise extends Controller
         //
     }
 
-    public function calInterest($id, $type, $com_id)
+    public function calInterest()
+    // public function calInterest($id, $type, $com_id)
     {
 
-        $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
+        // $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
+        $Compro = Compromise::get();
 
-        $ComFin = ComFinance::where('cus_id', $id)
+        foreach ($Compro as $item) {
 
-            ->Where('status', '!=', 'cancel')
-            ->Where('status', '!=', 'ประนอมหนี้เดิม')
-            ->orderBy('pay_date', 'ASC')
-            ->get();
-        $ComInstall = ComInstall::where('com_id', $com_id)
-            ->whereNot('totalSum', 0)
-            ->get();
+            $ComFin = ComFinance::where('cus_id', $item->id)
+                ->Where('status', '!=', 'cancel')
+                ->Where('status', '!=', 'ประนอมหนี้เดิม')
+                ->orderBy('pay_date', 'ASC')
+                ->get();
 
-        $ComInstallDate = ComInstall::where('com_id', $com_id)
-            ->whereNot('totalSum', 0)
-            ->orderBy('due_date', 'ASC')
-            ->first();
-        // dd($ComInstall);
-        $totalPay = @$ComFin->sum('pay_amount') + @$Compro->pay_first;
-        $countCom = count($ComFin);
+            $ComInstall = ComInstall::where('com_id', $item->id)
+                ->whereNot('totalSum', 0)
+                ->get();
 
-        $DiffMonthcount = 0;
-        $DiffMonthRow = 0;
-        $totalSum = $Compro->totalSum;
+            $ComInstallDate = ComInstall::where('com_id', $item->id)
+                ->whereNot('totalSum', 0)
+                ->orderBy('due_date', 'ASC')
+                ->first();
+            // dd($ComInstall);
+            $totalPay = @$ComFin->sum('pay_amount') + @$item->pay_first;
+            $countCom = count($ComFin);
 
-        $totalInterest = 0;
+            $DiffMonthcount = 0;
+            $DiffMonthRow = 0;
+            $totalSum = $item->totalSum;
+            $array_total = [];
 
-        if ($ComInstall != NULL && $ComInstallDate != NULL) {
-            $todayFormat = Carbon::now()->format('Y-m');
-            $today = Carbon::parse($todayFormat);
+            $totalInterest = 0;
 
-            $dueDateFomat = Carbon::parse($ComInstallDate->due_date)->format('Y-m');
-            $duedate = Carbon::parse($dueDateFomat);
+            if ($ComInstall != NULL && $ComInstallDate != NULL) {
+                $todayFormat = Carbon::now()->format('Y-m');
+                $today = Carbon::parse($todayFormat);
 
-            $diffMonth = $duedate->diffInMonths($today);
-            if ($diffMonth >= 1) {
-                $Totalinterest = ceil((($totalSum * (@$Compro->interest / 100)) / 12)) * $diffMonth;
-                $interest = ceil((($totalSum * (@$Compro->interest / 100)) / 12));
-            } else {
-                $interest = 0;
-            }
+                $dueDateFomat = Carbon::parse($ComInstallDate->due_date)->format('Y-m');
+                $duedate = Carbon::parse($dueDateFomat);
 
-
-
-            $totalSum = $totalSum + $interest;
-            $array_total = ['countCom' => $countCom, 'totalSum' => $totalSum, 'DiffMonthRow' => $DiffMonthRow, 'DiffMonthcount' => $DiffMonthcount, 'interest' => $interest, 'Totalinterest' => @$Totalinterest];
-
-            for ($i = 0; $i < $diffMonth; $i++) {
-
-                DB::beginTransaction();
-                try {
-
-                    $ComInstallUpdate = ComInstall::where('id', $ComInstall[$i]->id)
-                        ->whereNot('totalSum', '0')
-                        ->first();
-
-
-                    $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
-                   
-                    if ($Compro->not_interest == 'Y' && $ComInstallUpdate->no_pay == '1') {
-                        $ComInstallUpdate->interest = 0;
-                        $ComInstallUpdate->interestShow = 0;
-                        $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
-                        $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
-                        $Compro->SumInterest = $Compro->totalSum + $Compro->totalInterest;
-                        $Compro->nowInterest = ComInstall::where('com_id', $com_id)->sum('interest');
-
-                        $Compro->totalSum = ComInstall::where('com_id', $com_id)->sum('totalSum') - $Compro->nowInterest;
-
-
-                        $Compro->update();
-                        $ComInstallUpdate->update();
-                        DB::commit();
-                        continue;
-                    }
-
-
-                    if ($ComInstallUpdate->interestShow == 0) {
-                       
-                        $ComInstallUpdate->interest = $interest;
-                        $ComInstallUpdate->interestShow = $interest;
-                        $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
-                    }
-                    $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
-                    $Compro->SumInterest = $Compro->totalSum + $Compro->totalInterest;
-                    $Compro->nowInterest = ComInstall::where('com_id', $com_id)->sum('interest');
-
-                    $Compro->totalSum = ComInstall::where('com_id', $com_id)->sum('totalSum') - $Compro->nowInterest;
-
-
-                    $Compro->update();
-                    $ComInstallUpdate->update();
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollback();
+                $diffMonth = $duedate->diffInMonths($today);
+                $diffDay = $duedate->diffInDays($today);
+                
+                if ($diffMonth >= 1 && $diffDay > 5) {
+                    $Totalinterest = ceil((($totalSum * (@$item->interest / 100)) / 12)) * $diffMonth;
+                    $interest = ceil((($totalSum * (@$item->interest / 100)) / 12));
+                } else {
+                    $interest = 0;
                 }
-                continue;
+
+                $totalSum = $totalSum + $interest;
+                $array_total[] = ['countCom' => $countCom, 'totalSum' => $totalSum, 'DiffMonthRow' => $DiffMonthRow, 'DiffMonthcount' => $DiffMonthcount, 'interest' => $interest, 'Totalinterest' => @$Totalinterest];
+
+                for ($i = 0; $i < $diffMonth; $i++) {
+
+                    DB::beginTransaction();
+                    try {
+                        
+                        $ComInstallUpdate = ComInstall::where('id', $ComInstall[$i]->id)
+                            ->whereNot('totalSum', '0')
+                            ->first();
+                        $ComproUpdate = Compromise::where('id', $item->id)->orderBy('id', 'DESC')->first();
+
+                        if ($ComproUpdate->not_interest == 'Y' && $ComInstallUpdate->no_pay == '1') {
+                            $ComInstallUpdate->interest = 0;
+                            $ComInstallUpdate->interestShow = 0;
+                            $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
+                            $ComproUpdate->totalInterest = ComInstall::where('com_id', $item->id)->sum('interestShow');
+                            $ComproUpdate->SumInterest = $ComproUpdate->totalSum + $ComproUpdate->totalInterest;
+                            $ComproUpdate->nowInterest = ComInstall::where('com_id', $item->id)->sum('interest');
+
+                            $ComproUpdate->totalSum = ComInstall::where('com_id', $item->id)->sum('totalSum') - $ComproUpdate->nowInterest;
+
+                            $ComproUpdate->update();
+                            $ComInstallUpdate->update();
+                            DB::commit();
+                            continue;
+                        }
+
+                        if ($ComInstallUpdate->interestShow == 0) {
+
+                            $ComInstallUpdate->interest = $interest;
+                            $ComInstallUpdate->interestShow = $interest;
+                            $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
+                        }
+
+                        $ComproUpdate->totalInterest = ComInstall::where('com_id', $item->id)->sum('interestShow');
+                        $ComproUpdate->SumInterest = $ComproUpdate->totalSum + $ComproUpdate->totalInterest;
+                        $ComproUpdate->nowInterest = ComInstall::where('com_id', $item->id)->sum('interest');
+
+                        $ComproUpdate->totalSum = ComInstall::where('com_id', $item->id)->sum('totalSum') - $ComproUpdate->nowInterest;
+
+
+
+                        $ComproUpdate->update();
+                        $ComInstallUpdate->update();
+
+
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                    }
+                    continue;
+                }
             }
-            return $array_total;
+            
         }
+        // return $array_total;
+        // $ComFin = ComFinance::where('cus_id', $id)
+        //     ->Where('status', '!=', 'cancel')
+        //     ->Where('status', '!=', 'ประนอมหนี้เดิม')
+        //     ->orderBy('pay_date', 'ASC')
+        //     ->get();
+
+        // $ComInstall = ComInstall::where('com_id', $com_id)
+        //     ->whereNot('totalSum', 0)
+        //     ->get();
+
+        // $ComInstallDate = ComInstall::where('com_id', $com_id)
+        //     ->whereNot('totalSum', 0)
+        //     ->orderBy('due_date', 'ASC')
+        //     ->first();
+        // // dd($ComInstall);
+        // $totalPay = @$ComFin->sum('pay_amount') + @$Compro->pay_first;
+        // $countCom = count($ComFin);
+
+        // $DiffMonthcount = 0;
+        // $DiffMonthRow = 0;
+        // $totalSum = $Compro->totalSum;
+
+        // $totalInterest = 0;
+
+        // if ($ComInstall != NULL && $ComInstallDate != NULL) {
+        //     $todayFormat = Carbon::now()->format('Y-m');
+        //     $today = Carbon::parse($todayFormat);
+
+        //     $dueDateFomat = Carbon::parse($ComInstallDate->due_date)->format('Y-m');
+        //     $duedate = Carbon::parse($dueDateFomat);
+
+        //     $diffMonth = $duedate->diffInMonths($today);
+        //     $diffDay = $duedate->diffInDays($today);
+
+        //     if ($diffMonth >= 1 && $diffDay > 5) {
+        //         $Totalinterest = ceil((($totalSum * (@$Compro->interest / 100)) / 12)) * $diffMonth;
+        //         $interest = ceil((($totalSum * (@$Compro->interest / 100)) / 12));
+        //     } else {
+        //         $interest = 0;
+        //     }
+
+        //     $totalSum = $totalSum + $interest;
+        //     $array_total = ['countCom' => $countCom, 'totalSum' => $totalSum, 'DiffMonthRow' => $DiffMonthRow, 'DiffMonthcount' => $DiffMonthcount, 'interest' => $interest, 'Totalinterest' => @$Totalinterest];
+
+        //     for ($i = 0; $i < $diffMonth; $i++) {
+
+        //         DB::beginTransaction();
+        //         try {
+
+        //             $ComInstallUpdate = ComInstall::where('id', $ComInstall[$i]->id)
+        //                 ->whereNot('totalSum', '0')
+        //                 ->first();
+
+
+        //             $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
+
+        //             if ($Compro->not_interest == 'Y' && $ComInstallUpdate->no_pay == '1') {
+        //                 $ComInstallUpdate->interest = 0;
+        //                 $ComInstallUpdate->interestShow = 0;
+        //                 $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
+        //                 $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
+        //                 $Compro->SumInterest = $Compro->totalSum + $Compro->totalInterest;
+        //                 $Compro->nowInterest = ComInstall::where('com_id', $com_id)->sum('interest');
+
+        //                 $Compro->totalSum = ComInstall::where('com_id', $com_id)->sum('totalSum') - $Compro->nowInterest;
+
+        //                 $Compro->update();
+        //                 $ComInstallUpdate->update();
+        //                 DB::commit();
+        //                 continue;
+        //             }
+
+
+        //             if ($ComInstallUpdate->interestShow == 0) {
+
+        //                 $ComInstallUpdate->interest = $interest;
+        //                 $ComInstallUpdate->interestShow = $interest;
+        //                 $ComInstallUpdate->totalSum = $ComInstallUpdate->pay_amount + $ComInstallUpdate->interest;
+        //             }
+        //             $Compro->totalInterest = ComInstall::where('com_id', $com_id)->sum('interestShow');
+        //             $Compro->SumInterest = $Compro->totalSum + $Compro->totalInterest;
+        //             $Compro->nowInterest = ComInstall::where('com_id', $com_id)->sum('interest');
+
+        //             $Compro->totalSum = ComInstall::where('com_id', $com_id)->sum('totalSum') - $Compro->nowInterest;
+
+
+        //             $Compro->update();
+        //             $ComInstallUpdate->update();
+        //             DB::commit();
+        //         } catch (\Exception $e) {
+        //             DB::rollback();
+        //         }
+        //         continue;
+        //     }
+        //     return $array_total;
+        // }
     }
 }

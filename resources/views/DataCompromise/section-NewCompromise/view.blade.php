@@ -18,8 +18,13 @@
 
             <div class="col-6 text-end">
                 <a href="{{ url()->previous() }}" type="button"
-                    class="btn btn-primary btn-rounded waves-effect waves-light mb-2 me-2">
+                    class="btn btn-danger btn-rounded waves-effect waves-light mb-2 me-2">
                     <i class="fa-solid fa-arrow-left-long"></i> ย้อนกลับ
+                </a>
+                <a  
+                    type="button" id="updateAll"
+                    class="btn btn-primary btn-rounded waves-effect waves-light mb-2 me-2">
+                    อัพเดตการจ่าย
                 </a>
 
                 {{-- <button type="button" href="{{ route('Law.update', $data->id) }}?type={{ 'updateDataCus3' }}" class="btn btn-warning btn-sm">ส่งตั้งเจ้าพนักงาน</button> --}}
@@ -170,6 +175,55 @@
             </div>
         
     </div>
+    <script>
+        $(function() {
+            $("#updateAll").click(()=>{
 
+                Swal.fire({
+                title: 'ต้องการอัพเดทการชำระ ใช่หรือไม่ ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่ ,ต้องการอัพเดท',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#modal-sm-load').modal('show')
+                        $.ajax({
+                            url : "{{ route('LawCom.update',0) }}",
+                            type : 'put',
+                            data : {
+                                type : 'updateAll',
+                                _token : '{{ csrf_token() }}',
+                            },
+                            success : (response)=>{
+                                $('#modal-sm-load').modal('hide')
+                                Swal.fire({
+                                icon: 'success',
+                                text: 'อัพเดทข้อมูลเรียบร้อย',
+                                showConfirmButton: true,
+                                showCancelButton: false,  
+                                })
+                            },
+                            error : (err)=>{
+                            $('#modal-sm-load').modal('hide')
+                            Swal.fire({
+                                icon: 'error',
+                                title : `ERROR ! ${err.status}`,
+                                text: 'อัพเดทข้อมูลไม่สำเร็จ',
+                                showConfirmButton: true,
+                                showCancelButton: false, 
+                                })
+                                $("#modal-sm").modal('toggle');
+
+                            }
+                        })
+                    }
+                }) 
+
+            })
+           
+        })
+    </script>
 
 @endsection
