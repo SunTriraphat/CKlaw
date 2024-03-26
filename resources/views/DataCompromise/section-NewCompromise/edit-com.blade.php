@@ -22,7 +22,7 @@
                     <div class="mb-3 input-bx">
                         <span>ประเภทประนอมหนี้</span>
                         <select class="form-select addOPR" id="type_com" name="type_com" required>
-                            <option value="ทำยอมชั้นศาล">ทำยอมชั้นศาล
+                            <option value="ทำยอมชั้นศาล" {{ trim(@$data->type_com) == 'ทำยอมชั้นศาล' ? 'selected' : '' }}>ทำยอมชั้นศาล
                             </option>
                             <option value="ตกลงผ่อนหลังพิพากษา"
                                 {{ trim(@$data->type_com) == 'ตกลงผ่อนหลังพิพากษา' ? 'selected' : '' }}>
@@ -59,25 +59,19 @@
                     @endif
 
 
-
-
                     <div class="mb-3 input-bx">
                         <span>ค่างวด</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->period) }}"
-                            onkeyup="autoInstallments()" name="period" id="period" required placeholder=" " />
-
+                             name="period" id="period" required placeholder=" " />
+                        {{-- <input type="text"class="form-control" value="{{ trim(@$data->period) }}"
+                            onkeyup="autoInstallments()" name="period" id="period" required placeholder=" " /> --}}
 
                     </div>
                     <div class="mb-3 input-bx">
                         <span>ระยะเวลาผ่อน</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->installments) }}"
-                            name="installments" id="installments" required placeholder=" " readonly />
+                            name="installments" id="installments" required placeholder=" "  />
                     </div>
-
-
-
-
-
 
                 </div>
                 <div class="col-sm-6 ">
@@ -119,25 +113,45 @@
                     <div class="mb-3 input-bx">
                         <span>ยอดเงินก้อนแรก</span>
                         <input type="text"class="form-control" value="{{ trim(@$data->pay_first) }}"
-                            onkeyup="autoInstallments()" value="0" name="pay_first" id="pay_first" required
+                             value="0" name="pay_first" id="pay_first" required
                             placeholder=" " />
+                        {{-- <input type="text"class="form-control" value="{{ trim(@$data->pay_first) }}"
+                            onkeyup="autoInstallments()" value="0" name="pay_first" id="pay_first" required
+                            placeholder=" " /> --}}
                     </div>
 
 
 
                 </div>
                 <div class="col-sm-6 ">
-                    <div>
+                    {{-- <div>
                         <input type="checkbox" value="Y"  {{ $data->not_interest == 'Y' ? 'checked disabled' : '' }} id="not_interest" name="not_interest" />
                         <label for="not_interest">ไม่คิดดอกเบี้ยเดือนแรก</label>
+                    </div> --}}
+                    <div class="mb-3 input-bx">
+                        <span>ประเภทดอกเบี้ย</span>
+                        <select class="form-select addOPR" id="type_interest" name="type_interest" required {{@$data->ComToComInstall != null ? 'disabled' : ''}}>
+                           
+                            <option value="1"
+                                {{ trim(@$data->type_interest) == '1' ? 'selected' : '' }}>
+                                1
+                            </option>
+                            <option value="2"
+                                {{ trim(@$data->type_interest) == '2' ? 'selected' : '' }}>
+                                2</option>
+                            <option value="3"
+                                {{ trim(@$data->type_interest) == '3' ? 'selected' : '' }}>
+                                3</option>
+
+                        </select>
                     </div>
                 </div>
                 <div class="col-sm-6 ">
-                    <div class="mb-3 input-bx">
+                    {{-- <div class="mb-3 input-bx">
                         <span>หมายเหตุ</span>
                         <input type="text"class="form-control" name="not_interest_note" id="not_interest_note"
                             required placeholder=" " />
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 

@@ -298,11 +298,13 @@ class DataCompromise extends Controller
 
                 $due_date = Carbon::parse(@$ComInstall->where('totalSum', '!=', '0')->where('due_date', '<', date('Y-m-d'))->first()->due_date);
                 $diffDay = $due_date->DiffInMonths($today);
-                $Minimum = TrackingMinimum::where('num', $diffDay)->first();
+                // $Minimum = TrackingMinimum::where('num', $diffDay)->first();
 
                 if ($diffDay >= 2 || $Tracking != NULL) {
                     if ($Tracking == NULL) {
-                        if ($request->data['pay_amount'] >= $Compro->period * $Minimum->minimum) {
+                        if ($request->data['pay_amount'] >= $Compro->period * 1)
+                        // if ($request->data['pay_amount'] >= $Compro->period * $Minimum->minimum)
+                         {
                             $TrackAdd = new Tracking;
                             $TrackAdd->userinsert =  Auth::user()->id;
                             $TrackAdd->date_tag =   Carbon::now();
@@ -756,7 +758,9 @@ class DataCompromise extends Controller
         }
 
         if ($request->type == 'updateCom') {
-
+            // dd($request->data['pay_com'],$request->data['period'],$request->data['installments']);
+            $final_in  = (float)str_replace(",", "", $request->data['pay_com']) - ((float)str_replace(",", "", $request->data['period']) * ($request->data['installments'] - 1));
+            
             DB::beginTransaction();
             try {
                 $Compromise = Compromise::where('id', $id)->first();
@@ -778,8 +782,9 @@ class DataCompromise extends Controller
                 $Compromise->note = $request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
                 $Compromise->interest = $request->data['interest'];
-                $Compromise->not_interest = @$request->data['not_interest'];
-                $Compromise->not_interest_note = $request->data['not_interest_note'];
+                // $Compromise->not_interest = @$request->data['not_interest'];
+                // $Compromise->not_interest_note = $request->data['not_interest_note'];
+                $Compromise->type_interest = $request->data['type_interest'];
                 $Compromise->totalSum = (float)($Compromise->pay_com) - (float)($Compromise->pay_first);
 
                 $Compromise->update();
@@ -795,7 +800,16 @@ class DataCompromise extends Controller
                 if (isset($Compromise->installments, $Compromise->period)) {
                     if (count($dataCominstall) == 0)
                         for ($i = 0; $i <= ($request->data['installments'] - 1); $i++) {
+                    
                             $ComInstall = new ComInstall;
+                            if($i == ($request->data['installments'] - 1)){
+                                $ComInstall->pay_amount =  $final_in;
+                                $ComInstall->totalSum = $final_in;
+                                $ComInstall->com_id = $Compromise->id;
+                                $ComInstall->no_pay = $i + 1;
+                                $ComInstall->save();
+                                break;
+                            }
                             $ComInstall->pay_amount =  $Compromise->period;
                             $ComInstall->com_id = $Compromise->id;
                             $ComInstall->no_pay = $i + 1;
@@ -805,6 +819,7 @@ class DataCompromise extends Controller
                             } else {
                                 $ComInstall->due_date = $Compromise->date_com;
                             }
+                           
                             $ComInstall->totalSum = $ComInstall->pay_amount;
                             $ComInstall->save();
                         }

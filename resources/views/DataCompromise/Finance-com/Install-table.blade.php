@@ -74,7 +74,8 @@
                         <th class="text-start">คงเหลือ</th>
 
                         <td class="text-end">
-                            {{ number_format(@$ComInstall->sum('totalSum') , 2) }}
+                            {{-- {{ number_format(@$ComInstall->sum('totalSum') , 2) }} --}}
+                            {{ number_format(@$Compro->totalSum , 2) }}
                         </td>
                     </tr>
                 </table>

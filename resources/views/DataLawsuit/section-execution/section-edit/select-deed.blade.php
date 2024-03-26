@@ -79,9 +79,10 @@
 
                         </div> --}}
                         <div class="mb-3 input-bx">
-                            <span>ราคาประเมิณ</span>
+                            <span>ราคาประเมิณ</span><a href="http://www.programcalculator.com/land_price.php" target="_blank">คำนวณ</a>
                             <input type="text"class="form-control" value="{{ trim(@$data->estimated_price) }}"
                             name="estimated_price" id="estimated_price" required />
+                            
                         </div>
                         <div class="mb-3 input-bx">
                             <span>
