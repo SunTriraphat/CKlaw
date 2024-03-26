@@ -105,6 +105,8 @@ class DataCompromise extends Controller
                 $Compromise->pay_first =  str_replace(",", "", $request->data['pay_first']);
                 $Compromise->installments = $request->data['installments'];
                 $Compromise->period = str_replace(",", "", $request->data['period']);
+                $Compromise->principal =  str_replace(",", "", $request->data['principal']);
+                $Compromise->place = $request->data['place'];
                 $Compromise->note = @$request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
                 $Compromise->interest = $request->data['interest'];
@@ -777,7 +779,9 @@ class DataCompromise extends Controller
 
                 $Compromise->pay_com = str_replace(",", "", $request->data['pay_com']);
                 $Compromise->pay_first =  str_replace(",", "", $request->data['pay_first']);
-                $Compromise->installments = $request->data['installments'];
+                $Compromise->principal =  str_replace(",", "", $request->data['principal']);
+                $Compromise->place = $request->data['place'];
+                 $Compromise->installments = $request->data['installments'];
                 $Compromise->period = str_replace(",", "", $request->data['period']);
                 $Compromise->note = $request->data['note'];
                 $Compromise->cus_id = $request->data['cus_id'];
@@ -807,6 +811,7 @@ class DataCompromise extends Controller
                                 $ComInstall->totalSum = $final_in;
                                 $ComInstall->com_id = $Compromise->id;
                                 $ComInstall->no_pay = $i + 1;
+                                $ComInstall->due_date = Carbon::parse($date_com)->addMonths($i)->endOfMonth()->toDateString();
                                 $ComInstall->save();
                                 break;
                             }
@@ -1127,13 +1132,13 @@ class DataCompromise extends Controller
     public function calInterest()
     // public function calInterest($id, $type, $com_id)
     {
-
+        
         // $Compro = Compromise::where('cus_id', $id)->orderBy('id', 'DESC')->first();
         $Compro = Compromise::get();
-
+        $test = [];
         foreach ($Compro as $item) {
 
-            $ComFin = ComFinance::where('cus_id', $item->id)
+            $ComFin = ComFinance::where('cus_id', $item->cus_id)
                 ->Where('status', '!=', 'cancel')
                 ->Where('status', '!=', 'ประนอมหนี้เดิม')
                 ->orderBy('pay_date', 'ASC')
@@ -1153,28 +1158,44 @@ class DataCompromise extends Controller
 
             $DiffMonthcount = 0;
             $DiffMonthRow = 0;
-            $totalSum = $item->totalSum;
+           
+            
+            
+            
             $array_total = [];
 
             $totalInterest = 0;
-
+            
             if ($ComInstall != NULL && $ComInstallDate != NULL) {
                 $todayFormat = Carbon::now()->format('Y-m');
                 $today = Carbon::parse($todayFormat);
-
+                
                 $dueDateFomat = Carbon::parse($ComInstallDate->due_date)->format('Y-m');
                 $duedate = Carbon::parse($dueDateFomat);
 
                 $diffMonth = $duedate->diffInMonths($today);
                 $diffDay = $duedate->diffInDays($today);
+
+                if($item->type_interest == 'ยอดคงเหลือ'){
+                    $totalSum = $item->totalSum;
+                }else{
+                    $totalSum = $item->principal;
+                }
                 
-                if ($diffMonth >= 1 && $diffDay > 5) {
+                if ($diffMonth >= 1) {
+                   
                     $Totalinterest = ceil((($totalSum * (@$item->interest / 100)) / 12)) * $diffMonth;
                     $interest = ceil((($totalSum * (@$item->interest / 100)) / 12));
+
                 } else {
                     $interest = 0;
                 }
-
+                $test["diffMonth"] = $diffMonth;
+                $test["id"] = $item->id;
+                $test["duedate"] = $ComInstallDate;
+                
+               dump($test);
+               
                 $totalSum = $totalSum + $interest;
                 $array_total[] = ['countCom' => $countCom, 'totalSum' => $totalSum, 'DiffMonthRow' => $DiffMonthRow, 'DiffMonthcount' => $DiffMonthcount, 'interest' => $interest, 'Totalinterest' => @$Totalinterest];
 
@@ -1182,7 +1203,6 @@ class DataCompromise extends Controller
 
                     DB::beginTransaction();
                     try {
-                        
                         $ComInstallUpdate = ComInstall::where('id', $ComInstall[$i]->id)
                             ->whereNot('totalSum', '0')
                             ->first();

@@ -37,6 +37,12 @@
                             <option value="ประนอมหนี้ก่อนฟ้อง">ประนอมหนี้ก่อนฟ้อง</option>
                         </select>
                     </div>
+                    <div class="mb-3 input-bx">
+                        <span>สถานที่</span>
+                        <input type="text"class="form-control" 
+                             name="place" id="place" required placeholder=" " />
+                     
+                    </div>
 
                     <div class="mb-3 input-bx">
                         <span>วันที่ประนอม</span>
@@ -84,6 +90,13 @@
                         <input type="hidden"class="form-control" value="{{ trim(@$Cus->status_exe) }}"
                             name="status_exe" id="status_exe" required placeholder=" " />
                     </div>
+                    <div class="mb-3 input-bx">
+                        <span>ยอดต้นเงิน</span>
+                        <input type="text"class="form-control" value="{{ number_format(@$data->principal) }}"
+                            onkeyup="autoCurrenncy()" name="principal" id="principal" required placeholder=" " />
+
+  
+                    </div>
 
                     <div class="mb-3 input-bx">
                         <span>วันที่ชำระงวดแรก</span>
@@ -98,7 +111,6 @@
                             {{-- <input type="text" class="form-control" name="date_tribunal" id="date_tribunal" required /> --}}
                             <input type="date" lang="th-th" name="stop_date" id="date_com" class="form-control"
                                 disabled>
-
                         </div>
                     @endif
 
@@ -106,18 +118,16 @@
                         <span>ดอกเบี้ย %</span>
                         <input type="text"class="form-control" name="interest" id="interest" required
                             placeholder=" " />
-
                     </div>
+
                     <div class="mb-3 input-bx">
                         <span>ยอดเงินก้อนแรก</span>
                         <input type="text"class="form-control" onkeyup="autoInstallments()" value="0"
                             name="pay_first" id="pay_first" required placeholder=" " />
                     </div>
 
-
-
                 </div>
-                <div class="col-sm-6 ">
+                {{-- <div class="col-sm-6 ">
                     <div>
                         <input type="checkbox" value="Y" id="not_interest" name="not_interest" />
                         <label for="not_interest">ไม่คิดดอกเบี้ยเดือนแรก</label>
@@ -129,7 +139,7 @@
                         <input type="text"class="form-control" name="not_interest_note" id="not_interest_note"
                             required placeholder=" " />
                     </div>
-                </div>
+                </div> --}}
             </div>
 
 
@@ -161,6 +171,8 @@
         pay_first.value = pay_first.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         let pay_com = document.getElementById("pay_com");
         pay_com.value = pay_com.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        let principal = document.getElementById("principal");
+        principal.value = principal.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         let period = document.getElementById("period");
         period.value = period.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");

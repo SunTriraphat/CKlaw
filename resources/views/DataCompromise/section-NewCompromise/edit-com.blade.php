@@ -37,6 +37,12 @@
 
                         </select>
                     </div>
+                    <div class="mb-3 input-bx">
+                        <span>สถานที่</span>
+                        <input type="text"class="form-control" value="{{ trim(@$data->place) }}"
+                             name="place" id="place" required placeholder=" " />
+                     
+                    </div>
 
                     <div class="mb-3 input-bx">
                         <span>วันที่ประนอม</span>
@@ -72,6 +78,23 @@
                         <input type="text"class="form-control" value="{{ trim(@$data->installments) }}"
                             name="installments" id="installments" required placeholder=" "  />
                     </div>
+                    <div class="mb-3 input-bx">
+                        <span>ประเภทดอกเบี้ย</span>
+                        <select class="form-select addOPR" id="type_interest" name="type_interest" required >
+                           
+                            <option value="ยอดคงเหลือ"
+                                {{ trim(@$data->type_interest) == 'ยอดคงเหลือ' ? 'selected' : '' }}>
+                                ยอดคงเหลือ
+                            </option>
+                            <option value="ยอดต้นเงิน"
+                                {{ trim(@$data->type_interest) == 'ยอดต้นเงิน' ? 'selected' : '' }}>
+                                ยอดต้นเงิน</option>
+                            <option value="ครบสัญญา"
+                                {{ trim(@$data->type_interest) == 'ครบสัญญา' ? 'selected' : '' }}>
+                                ครบสัญญา</option>
+
+                        </select>
+                    </div>
 
                 </div>
                 <div class="col-sm-6 ">
@@ -84,6 +107,14 @@
                             id="cus_id" required placeholder=" " />
                         <input type="hidden"class="form-control" value="{{ trim(@$data->totalInterest) }}"
                             name="totalInterest" id="totalInterest" required placeholder=" " />
+
+                    </div>
+                    <div class="mb-3 input-bx">
+                        <span>ยอดต้นเงิน</span>
+                        <input type="text"class="form-control" value="{{ number_format(@$data->principal) }}"
+                            onkeyup="autoCurrenncy()" name="principal" id="principal" required placeholder=" " />
+
+                     
 
                     </div>
 
@@ -124,27 +155,8 @@
 
                 </div>
                 <div class="col-sm-6 ">
-                    {{-- <div>
-                        <input type="checkbox" value="Y"  {{ $data->not_interest == 'Y' ? 'checked disabled' : '' }} id="not_interest" name="not_interest" />
-                        <label for="not_interest">ไม่คิดดอกเบี้ยเดือนแรก</label>
-                    </div> --}}
-                    <div class="mb-3 input-bx">
-                        <span>ประเภทดอกเบี้ย</span>
-                        <select class="form-select addOPR" id="type_interest" name="type_interest" required {{@$data->ComToComInstall != null ? 'disabled' : ''}}>
-                           
-                            <option value="1"
-                                {{ trim(@$data->type_interest) == '1' ? 'selected' : '' }}>
-                                1
-                            </option>
-                            <option value="2"
-                                {{ trim(@$data->type_interest) == '2' ? 'selected' : '' }}>
-                                2</option>
-                            <option value="3"
-                                {{ trim(@$data->type_interest) == '3' ? 'selected' : '' }}>
-                                3</option>
-
-                        </select>
-                    </div>
+                  
+                    
                 </div>
                 <div class="col-sm-6 ">
                     {{-- <div class="mb-3 input-bx">
@@ -187,6 +199,8 @@
         pay_first.value = pay_first.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         let pay_com = document.getElementById("pay_com");
         pay_com.value = pay_com.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        let principal = document.getElementById("principal");
+        principal.value = principal.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         let period = document.getElementById("period");
         period.value = period.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
